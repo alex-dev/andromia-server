@@ -2,10 +2,10 @@ import {ExpressApplication} from '@tsed/common';
 import {bootstrap, inject} from '@tsed/testing';
 import {describe, beforeEach, it} from 'mocha';
 import {Server} from '../src/server';
-import {validateSets} from './validators/models';
+import {validateLocations} from './validators/models';
 import * as supertest from 'supertest';
 
-describe('Sets:', () => {
+describe('Locations:', () => {
   let app: supertest.SuperTest<supertest.Test>;
 
   beforeEach(bootstrap(Server));
@@ -13,9 +13,9 @@ describe('Sets:', () => {
     app = supertest(express);
   }));
 
-  describe('GET /sets', () => {
-    it('should return all known sets.', done => {
-      app.get('/sets')
+  describe('GET /locations', () => {
+    it('should return all known locations.', done => {
+      app.get('/locations')
         .expect('Content-Type', 'application/json')
         .expect(200)
         .end((err, response) => {
@@ -23,7 +23,7 @@ describe('Sets:', () => {
             done(err);
           }
   
-          validateSets(JSON.parse(response.text));
+          validateLocations(JSON.parse(response.text));
           done();
         });
     });
