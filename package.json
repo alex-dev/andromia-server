@@ -2,6 +2,7 @@
   "name": "andromia-server",
   "version": "1.0.0",
   "description": "A Node.js server built with Ts.ED for Andromia.",
+  "repository": "https://github.com/alex-dev/andromia-server",
   "main": "build/app.js",
   "scripts": {
     "build": "npm run transpile:prod",
