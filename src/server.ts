@@ -14,14 +14,12 @@ export class Server extends ServerLoader {
   /**
    * Configure global middlewares.
    */
-  public $onMountingMiddlewares(): void|Promise<any> {
+  public $onMountingMiddlewares(): void|Promise<void> {
     this.use(GlobalAcceptMimesMiddleware)
       .use(compress({}))
       .use(override())
       .use(parser.json())
       .use(parser.urlencoded({ extended: true }));
-
-    return null;
   }
 
   public $onReady() {
