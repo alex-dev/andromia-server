@@ -3,14 +3,14 @@ import { bootstrap, inject } from '@tsed/testing';
 import { describe, beforeEach, it } from 'mocha';
 import { Server } from '../src/server';
 import { validateExplorateur } from './validators/models';
-import * as supertest from 'supertest';
+import * as request from 'supertest';
 
 describe('Login:', () => {
-  let app: supertest.SuperTest<supertest.Test>;
+  let app: request.SuperTest<request.Test>;
 
   beforeEach(bootstrap(Server));
   beforeEach(inject([ExpressApplication], (express: ExpressApplication) => {
-    app = supertest(express);
+    app = request(express);
   }));
 
   describe('POST /login', () => {
@@ -21,9 +21,9 @@ describe('Login:', () => {
           .expect('Content-Type', 'application/json')
           .expect('Authorization')
           .expect(200)
-          .end((err, response) => {
-            if (err) {
-              done(err);
+          .end((error, response) => {
+            if (error) {
+              done(error);
             }
 
             validateExplorateur(JSON.parse(response.text), false, false);
@@ -37,9 +37,9 @@ describe('Login:', () => {
           .expect('Content-Type', 'application/json')
           .expect('Authorization')
           .expect(200)
-          .end((err, response) => {
-            if (err) {
-              done(err);
+          .end((error, response) => {
+            if (error) {
+              done(error);
             }
 
             validateExplorateur(JSON.parse(response.text), true, false);
@@ -53,9 +53,9 @@ describe('Login:', () => {
           .expect('Content-Type', 'application/json')
           .expect('Authorization')
           .expect(200)
-          .end((err, response) => {
-            if (err) {
-              done(err);
+          .end((error, response) => {
+            if (error) {
+              done(error);
             }
 
             validateExplorateur(JSON.parse(response.text), false, true);
@@ -69,9 +69,9 @@ describe('Login:', () => {
           .expect('Content-Type', 'application/json')
           .expect('Authorization')
           .expect(200)
-          .end((err, response) => {
-            if (err) {
-              done(err);
+          .end((error, response) => {
+            if (error) {
+              done(error);
             }
 
             validateExplorateur(JSON.parse(response.text), true, false);
@@ -85,9 +85,9 @@ describe('Login:', () => {
         app.post('/login')
           .send({ name: 'user', password: 'invalid' })
           .expect(401)
-          .end((err, response) => {
-            if (err) {
-              done(err);
+          .end((error, response) => {
+            if (error) {
+              done(error);
             }
 
             done();
@@ -100,9 +100,9 @@ describe('Login:', () => {
         app.post('/login')
           .send({ name: 'user' })
           .expect(422)
-          .end((err, response) => {
-            if (err) {
-              done(err);
+          .end((error, response) => {
+            if (error) {
+              done(error);
             }
 
             done();

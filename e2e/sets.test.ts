@@ -3,14 +3,14 @@ import { bootstrap, inject } from '@tsed/testing';
 import { describe, beforeEach, it } from 'mocha';
 import { Server } from '../src/server';
 import { validateSets } from './validators/models';
-import * as supertest from 'supertest';
+import * as request from 'supertest';
 
 describe('Sets:', () => {
-  let app: supertest.SuperTest<supertest.Test>;
+  let app: request.SuperTest<request.Test>;
 
   beforeEach(bootstrap(Server));
   beforeEach(inject([ExpressApplication], (express: ExpressApplication) => {
-    app = supertest(express);
+    app = request(express);
   }));
 
   describe('GET /sets', () => {
@@ -18,9 +18,9 @@ describe('Sets:', () => {
       app.get('/sets')
         .expect('Content-Type', 'application/json')
         .expect(200)
-        .end((err, response) => {
-          if (err) {
-            done(err);
+        .end((error, response) => {
+          if (error) {
+            done(error);
           }
   
           validateSets(JSON.parse(response.text));
