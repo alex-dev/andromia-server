@@ -1,8 +1,8 @@
-import {ExpressApplication} from '@tsed/common';
-import {bootstrap, inject} from '@tsed/testing';
-import {describe, beforeEach, it} from 'mocha';
-import {Server} from '../src/server';
-import {validateSets} from './validators/models';
+import { ExpressApplication } from '@tsed/common';
+import { bootstrap, inject } from '@tsed/testing';
+import { describe, beforeEach, it } from 'mocha';
+import { Server } from '../src/server';
+import { validateSets } from './validators/models';
 import * as supertest from 'supertest';
 
 describe('Sets:', () => {

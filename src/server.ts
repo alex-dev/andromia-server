@@ -1,4 +1,4 @@
-import {ServerLoader, ServerSettings, GlobalAcceptMimesMiddleware} from '@tsed/common';
+import { ServerLoader, ServerSettings, GlobalAcceptMimesMiddleware } from '@tsed/common';
 import * as parser from 'body-parser';
 import * as compress from 'compression';
 import * as override from 'method-override';

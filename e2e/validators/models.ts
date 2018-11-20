@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import * as moment from 'moment';
 
 export function validateSets(data: any) {
