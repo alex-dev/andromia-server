@@ -18,6 +18,7 @@ describe('Login:', () => {
     describe('with valid credentials', () => {
       it('should allow connection', done => {
         app.post('/login')
+          .set('Content-Type', 'application/json')
           .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
           .expect('Authorization')
@@ -27,6 +28,7 @@ describe('Login:', () => {
 
       it('should allow connection with expand units', done => {
         app.post('/login?expand=units')
+          .set('Content-Type', 'application/json')
           .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
           .expect('Authorization')
@@ -36,6 +38,7 @@ describe('Login:', () => {
 
       it('should allow connection with expand explorations', done => {
         app.post('/login?expand=explorations')
+          .set('Content-Type', 'application/json')
           .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
           .expect('Authorization')
@@ -45,6 +48,7 @@ describe('Login:', () => {
 
       it('should allow connection with expand explorations and units', done => {
         app.post('/login?expend=explorations,units')
+          .set('Content-Type', 'application/json')
           .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
           .expect('Authorization')
@@ -56,6 +60,7 @@ describe('Login:', () => {
     describe('with invalid credentials', () => {
       it('should refuse connection', done => {
         app.post('/login')
+          .set('Content-Type', 'application/json')
           .send(Entities.invalidAuthentication[0])
           .expect(401, done);
       });
@@ -64,9 +69,19 @@ describe('Login:', () => {
     describe('with unprocessable body', () => {
       it('should inform', done => {
         app.post('/login')
+          .set('Content-Type', 'application/json')
           .send({ name: 'user' })
           .expect(422, done);
       });
     });
+
+    describe('with invalid content type', () => {
+      it('should inform', done => {
+        app.post('/login')
+        .set('Content-Type', 'application/json')
+        .send(Entities.validAuthentication[0])
+        .expect(422, done);
+      });
+    })
   });
 });
