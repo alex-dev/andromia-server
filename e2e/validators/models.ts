@@ -113,6 +113,15 @@ export function validateExplorateur(data: any, expandUnits = false, expandExplor
   }
 }
 
+export function validateRunesCounts(data: any) {
+  expect(data).to.be.an('object');
+  Object.entries(data).forEach(([ability, count]) => { 
+    expect(ability).to.be.a('string'); 
+    expect(count).to.be.a('number'); 
+    expect(count as number % 1).to.be.equal(0); 
+  });
+}
+
 function validateDate(data: any, property: string) {
   expect(data).to.haveOwnProperty(property).that.is.a('string');
   expect(moment(data[property]).isValid()).to.be.true;
@@ -120,9 +129,5 @@ function validateDate(data: any, property: string) {
 
 function validateRuneDictionnary(data: any, property: string) {
   expect(data).to.haveOwnProperty(property).that.is.an('object');
-  Object.entries(data[property]).forEach(([ability, count]) => { 
-    expect(ability).to.be.a('string'); 
-    expect(count).to.be.a('number'); 
-    expect(count as number % 1).to.be.equal(0); 
-  });
+  validateRunesCounts(data[property]);
 }
