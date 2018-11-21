@@ -36,7 +36,7 @@ describe("Explorateur's units:", () => {
           .expect((response: request.Response) => validateOwnedUnits(JSON.parse(response.text).items), done);
       });
 
-      it('should return all units owned by explorateur', done => {
+      it('should return not acceptable', done => {
         app.get(`/explorateurs/${target.name}/units`)
           .set('Authorization', authorization)
           .set('Accept', 'text/html')
@@ -66,7 +66,7 @@ describe("Explorateur's units:", () => {
           .expect(404, done);
       });
 
-      it('should return all units owned by explorateur', done => {
+      it('should return not acceptable', done => {
         app.get(`/explorateurs/${target.name}/units`)
           .set('Authorization', authorization)
           .set('Accept', 'text/html')

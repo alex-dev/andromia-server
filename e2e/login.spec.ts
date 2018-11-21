@@ -18,6 +18,7 @@ describe('Login:', () => {
     describe('with valid credentials', () => {
       it('should allow connection', done => {
         app.post('/login')
+          .set('Accept', 'application/json')
           .set('Content-Type', 'application/json')
           .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
@@ -28,6 +29,7 @@ describe('Login:', () => {
 
       it('should allow connection with expand units', done => {
         app.post('/login?expand=units')
+          .set('Accept', 'application/json')
           .set('Content-Type', 'application/json')
           .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
@@ -38,6 +40,7 @@ describe('Login:', () => {
 
       it('should allow connection with expand explorations', done => {
         app.post('/login?expand=explorations')
+          .set('Accept', 'application/json')
           .set('Content-Type', 'application/json')
           .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
@@ -48,6 +51,7 @@ describe('Login:', () => {
 
       it('should allow connection with expand explorations and units', done => {
         app.post('/login?expend=explorations,units')
+          .set('Accept', 'application/json')
           .set('Content-Type', 'application/json')
           .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
@@ -55,11 +59,28 @@ describe('Login:', () => {
           .expect(200)
           .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), true, true), done);
       });
+
+      it('should return not acceptable', done => {
+        app.post('/login')
+          .set('Accept', 'text/html')
+          .set('Content-Type', 'application/json')
+          .send(Entities.validAuthentication[0])
+          .expect(406, done);
+      });
     });
 
     describe('with invalid credentials', () => {
       it('should refuse connection', done => {
         app.post('/login')
+          .set('Accept', 'application/json')
+          .set('Content-Type', 'application/json')
+          .send(Entities.invalidAuthentication[0])
+          .expect(401, done);
+      });
+
+      it('should refuse connection', done => {
+        app.post('/login')
+          .set('Accept', 'text/html')
           .set('Content-Type', 'application/json')
           .send(Entities.invalidAuthentication[0])
           .expect(401, done);
@@ -69,6 +90,15 @@ describe('Login:', () => {
     describe('with unprocessable body', () => {
       it('should inform', done => {
         app.post('/login')
+          .set('Accept', 'application/json')
+          .set('Content-Type', 'application/json')
+          .send({ name: 'user' })
+          .expect(422, done);
+      });
+
+      it('should inform', done => {
+        app.post('/login')
+          .set('Accept', 'text/html')
           .set('Content-Type', 'application/json')
           .send({ name: 'user' })
           .expect(422, done);
@@ -78,10 +108,19 @@ describe('Login:', () => {
     describe('with invalid content type', () => {
       it('should inform', done => {
         app.post('/login')
-        .set('Content-Type', 'application/json')
-        .send(Entities.validAuthentication[0])
-        .expect(422, done);
+          .set('Accept', 'application/json')
+          .set('Content-Type', 'text/html')
+          .send(Entities.validAuthentication[0])
+          .expect(422, done);
       });
-    })
+
+      it('should inform', done => {
+        app.post('/login')
+          .set('Accept', 'text/html')
+          .set('Content-Type', 'text/html')
+          .send(Entities.validAuthentication[0])
+          .expect(422, done);
+      });
+    });
   });
 });
