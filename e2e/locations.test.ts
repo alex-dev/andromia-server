@@ -18,14 +18,7 @@ describe('Locations:', () => {
       app.get('/locations')
         .expect('Content-Type', 'application/json')
         .expect(200)
-        .end((error, response) => {
-          if (error) {
-            done(error);
-          }
-  
-          validateLocations(JSON.parse(response.text));
-          done();
-        });
+        .expect((response: request.Response) => validateLocations(JSON.parse(response.text)), done);
     });
   });
 });

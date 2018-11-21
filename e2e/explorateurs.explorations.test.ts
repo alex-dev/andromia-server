@@ -5,7 +5,7 @@ import { Server } from '../src/server';
 import { authenticate } from './authenticator/authenticator';
 import { Entities } from './database/entities';
 import { validateCollection } from './validators/halson';
-import { validateOwnedUnit, validateOwnedUnits } from './validators/models';
+import { validateExploration, validateExplorations } from './validators/models';
 import * as request from 'supertest';
 
 describe("Explorateur's units:", () => {
@@ -20,19 +20,19 @@ describe("Explorateur's units:", () => {
     app = request(express);
   }));
 
-  describe('GET /explorateurs/{name}/units', () => {
+  describe('GET /explorateurs/{name}/explorations', () => {
     describe('with authenticated user being target explorateur', () => {      
       beforeEach(() => {
         authorization = authenticate(target, app);
       });
 
-      it('should return all units owned by explorateur', done => {
-        app.get(`/explorateurs/${target.name}/units`)
+      it('should return all explorations done by explorateur', done => {
+        app.get(`/explorateurs/${target.name}/explorations`)
           .set('Authorization', authorization)
           .expect('Content-Type', 'application/hal+json')
           .expect(200)
           .expect(response => validateCollection(JSON.parse(response.text)))
-          .expect((response: request.Response) => validateOwnedUnits(JSON.parse(response.text).items), done);
+          .expect((response: request.Response) => validateExplorations(JSON.parse(response.text).items), done);
       });
     });
 
@@ -41,17 +41,17 @@ describe("Explorateur's units:", () => {
         authorization = authenticate(other, app);
       });
 
-      it('should return all units owned by explorateur', done => {
-        app.get(`/explorateurs/${target.name}/units`)
+      it('should return all explorations done by explorateur', done => {
+        app.get(`/explorateurs/${target.name}/explorations`)
           .set('Authorization', authorization)
           .expect('Content-Type', 'application/hal+json')
           .expect(200)
           .expect(response => validateCollection(JSON.parse(response.text)))
-          .expect((response: request.Response) => validateOwnedUnits(JSON.parse(response.text).items), done);
+          .expect((response: request.Response) => validateExplorations(JSON.parse(response.text).items), done);
       });
 
       it('should not find user', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units`)
+        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
           .set('Authorization', authorization)
           .expect(404, done);
       });
@@ -59,12 +59,12 @@ describe("Explorateur's units:", () => {
 
     describe('with anonymous user', () => {
       it('should refuse access', done => {
-        app.get(`/explorateurs/${target.name}/units`)
+        app.get(`/explorateurs/${target.name}/explorations`)
           .expect(401, done);
       });
 
       it('should refuse access', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units`)
+        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
           .expect(401, done);
       });
     });

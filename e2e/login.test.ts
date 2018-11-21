@@ -2,6 +2,7 @@ import { ExpressApplication } from '@tsed/common';
 import { bootstrap, inject } from '@tsed/testing';
 import { describe, beforeEach, it } from 'mocha';
 import { Server } from '../src/server';
+import { Entities } from './database/entities';
 import { validateExplorateur } from './validators/models';
 import * as request from 'supertest';
 
@@ -17,81 +18,46 @@ describe('Login:', () => {
     describe('with valid credentials', () => {
       it('should allow connection', done => {
         app.post('/login')
-          .send({ name: 'user', password: 'valid' })
+          .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
           .expect('Authorization')
           .expect(200)
-          .end((error, response) => {
-            if (error) {
-              done(error);
-            }
-
-            validateExplorateur(JSON.parse(response.text), false, false);
-            done();
-          });
+          .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), false, false), done);
       });
 
       it('should allow connection with expand units', done => {
         app.post('/login?expand=units')
-          .send({ name: 'user', password: 'valid' })
+          .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
           .expect('Authorization')
           .expect(200)
-          .end((error, response) => {
-            if (error) {
-              done(error);
-            }
-
-            validateExplorateur(JSON.parse(response.text), true, false);
-            done();
-          });
+          .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), true, false), done);
       });
 
       it('should allow connection with expand explorations', done => {
         app.post('/login?expand=explorations')
-          .send({ name: 'user', password: 'valid' })
+          .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
           .expect('Authorization')
           .expect(200)
-          .end((error, response) => {
-            if (error) {
-              done(error);
-            }
-
-            validateExplorateur(JSON.parse(response.text), false, true);
-            done();
-          });
+          .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), false, true), done);
       });
 
       it('should allow connection with expand explorations and units', done => {
         app.post('/login?expend=explorations,units')
-          .send({ name: 'user', password: 'valid' })
+          .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
           .expect('Authorization')
           .expect(200)
-          .end((error, response) => {
-            if (error) {
-              done(error);
-            }
-
-            validateExplorateur(JSON.parse(response.text), true, false);
-            done();
-          });
+          .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), true, true), done);
       });
     });
 
     describe('with invalid credentials', () => {
       it('should refuse connection', done => {
         app.post('/login')
-          .send({ name: 'user', password: 'invalid' })
-          .expect(401)
-          .end((error, response) => {
-            if (error) {
-              done(error);
-            }
-
-            done();
-          });
+          .send(Entities.invalidAuthentication[0])
+          .expect(401, done);
       });
     });
 
@@ -99,14 +65,7 @@ describe('Login:', () => {
       it('should inform', done => {
         app.post('/login')
           .send({ name: 'user' })
-          .expect(422)
-          .end((error, response) => {
-            if (error) {
-              done(error);
-            }
-
-            done();
-          });
+          .expect(422, done);
       });
     });
   });

@@ -18,14 +18,7 @@ describe('Sets:', () => {
       app.get('/sets')
         .expect('Content-Type', 'application/json')
         .expect(200)
-        .end((error, response) => {
-          if (error) {
-            done(error);
-          }
-  
-          validateSets(JSON.parse(response.text));
-          done();
-        });
+        .expect((response: request.Response) => validateSets(JSON.parse(response.text)), done);
     });
   });
 });

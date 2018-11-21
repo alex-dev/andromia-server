@@ -4,6 +4,7 @@ import { describe, beforeEach, it } from 'mocha';
 import { Server } from '../src/server';
 import { validateUnit, validateUnits } from './validators/models';
 import * as request from 'supertest';
+import { validateCollection } from './validators/halson';
 
 describe('Units:', () => {
   let app: request.SuperTest<request.Test>;
@@ -16,16 +17,10 @@ describe('Units:', () => {
   describe('GET /units', () => {
     it('should return all known units.', done => {
       app.get('/units')
-        .expect('Content-Type', 'application/json')
+        .expect('Content-Type', 'application/hal+json')
         .expect(200)
-        .end((error, response) => {
-          if (error) {
-            done(error);
-          }
-  
-          validateUnits(JSON.parse(response.text));
-          done();
-        });
+        .expect(response => validateCollection(JSON.parse(response.text)))
+        .expect((response: request.Response) => validateUnits(JSON.parse(response.text).items), done);
     });
   });
 
@@ -34,14 +29,7 @@ describe('Units:', () => {
       app.get('/units/:name')
         .expect('Content-Type', 'application/json')
         .expect(200)
-        .end((error, response) => {
-          if (error) {
-            done(error);
-          }
-  
-          validateUnit(JSON.parse(response.text));
-          done();
-        });
+        .expect((response: request.Response) => validateUnit(JSON.parse(response.text)), done);
     });
   });
 });

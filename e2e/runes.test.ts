@@ -18,14 +18,7 @@ describe('Runes:', () => {
       app.get('/runes')
         .expect('Content-Type', 'application/json')
         .expect(200)
-        .end((error, response) => {
-          if (error) {
-            done(error);
-          }
-  
-          validateRunes(JSON.parse(response.text));
-          done();
-        });
+        .expect((response: request.Response) => validateRunes(JSON.parse(response.text)), done);
     });
   });
 
@@ -34,14 +27,7 @@ describe('Runes:', () => {
       app.get('/runes/weapons')
         .expect('Content-Type', 'application/json')
         .expect(200)
-        .end((error, response) => {
-          if (error) {
-            done(error);
-          }
-  
-          validateRunes(JSON.parse(response.text));
-          done();
-        });
+        .expect((response: request.Response) => validateRunes(JSON.parse(response.text)), done);
     });
   });
 
@@ -50,14 +36,7 @@ describe('Runes:', () => {
       app.get('/runes/abilities')
         .expect('Content-Type', 'application/json')
         .expect(200)
-        .end((error, response) => {
-          if (error) {
-            done(error);
-          }
-  
-          validateRunes(JSON.parse(response.text));
-          done();
-        });
+        .expect((response: request.Response) => validateRunes(JSON.parse(response.text)), done);
     });
   });
 });
