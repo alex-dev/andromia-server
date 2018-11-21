@@ -16,27 +16,48 @@ describe('Runes:', () => {
   describe('GET /runes', () => {
     it('should return all known runes.', done => {
       app.get('/runes')
+        .set('Accept', 'application/json')
         .expect('Content-Type', 'application/json')
         .expect(200)
         .expect((response: request.Response) => validateRunes(JSON.parse(response.text)), done);
+    });
+
+    it('should return not acceptable', done => {
+      app.get('/runes')
+        .set('Accept', 'text/html')
+        .expect(406, done);
     });
   });
 
   describe('GET /runes/weapons', () => {
     it('should return all known weapons.', done => {
       app.get('/runes/weapons')
+        .set('Accept', 'application/json')
         .expect('Content-Type', 'application/json')
         .expect(200)
         .expect((response: request.Response) => validateRunes(JSON.parse(response.text)), done);
+    });
+
+    it('should return not acceptable', done => {
+      app.get('/runes/weapons')
+        .set('Accept', 'text/html')
+        .expect(406, done);
     });
   });
 
   describe('GET /runes/abilities', () => {
     it('should return all known abilities.', done => {
       app.get('/runes/abilities')
+        .set('Accept', 'application/json')
         .expect('Content-Type', 'application/json')
         .expect(200)
         .expect((response: request.Response) => validateRunes(JSON.parse(response.text)), done);
+    });
+
+    it('should return not acceptable', done => {
+      app.get('/runes/abilities')
+        .set('Accept', 'text/html')
+        .expect(406, done);
     });
   });
 });
