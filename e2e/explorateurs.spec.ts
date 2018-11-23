@@ -13,7 +13,6 @@ describe("Explorateur:", () => {
   const other = Entities.validAuthentication[1];
 
   let app: request.SuperTest<request.Test>;
-  let authorization: any;
 
   beforeEach(bootstrap(Server));
   beforeEach(inject([ExpressApplication], (express: ExpressApplication) => {
@@ -33,6 +32,8 @@ describe("Explorateur:", () => {
   });
 
   describe('PUT /explorateurs/{name}', () => {
+    let authorization: any;
+
     describe('with authenticated user being target explorateur', () => {      
       beforeEach(() => {
         authorization = authenticate(target, app);

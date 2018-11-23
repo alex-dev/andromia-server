@@ -16,4 +16,7 @@ export class Entities {
   public static validExplorationKeys = new Map([
     [Entities.validAuthentication[0].name, ['']]
   ]);
+
+  public static invalidUnit = 'invalidunit';
+  public static validUnit = 'validunit';
 }

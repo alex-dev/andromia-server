@@ -13,7 +13,7 @@ export function authenticate(
         done(error);
       }
 
-      header = response.get('Authorization');
+      header = response.get('X-Token');
       
       if (done) {
         done();

@@ -49,61 +49,69 @@ describe("Explorateur's units:", () => {
         authorization = authenticate(other, app);
       });
 
-      it('should return all units owned by explorateur', done => {
-        app.get(`/explorateurs/${target.name}/units`)
-          .set('Authorization', authorization)
-          .set('Accept', 'application/hal+json')
-          .expect('Content-Type', 'application/hal+json')
-          .expect(200)
-          .expect(response => validateCollection(JSON.parse(response.text)))
-          .expect((response: request.Response) => validateOwnedUnits(JSON.parse(response.text).items), done);
+      describe('with valid explorateur', () => {
+        it('should return all units owned by explorateur', done => {
+          app.get(`/explorateurs/${target.name}/units`)
+            .set('Authorization', authorization)
+            .set('Accept', 'application/hal+json')
+            .expect('Content-Type', 'application/hal+json')
+            .expect(200)
+            .expect(response => validateCollection(JSON.parse(response.text)))
+            .expect((response: request.Response) => validateOwnedUnits(JSON.parse(response.text).items), done);
+        });
+
+        it('should return not acceptable', done => {
+          app.get(`/explorateurs/${target.name}/units`)
+            .set('Authorization', authorization)
+            .set('Accept', 'text/html')
+            .expect(406, done);
+        });
       });
 
-      it('should not find user', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units`)
-          .set('Authorization', authorization)
-          .set('Accept', 'application/hal+json')
-          .expect(404, done);
-      });
+      describe('with invalid explorateur', () => {
+        it('should not find user', done => {
+          app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units`)
+            .set('Authorization', authorization)
+            .set('Accept', 'application/hal+json')
+            .expect(404, done);
+        });
 
-      it('should return not acceptable', done => {
-        app.get(`/explorateurs/${target.name}/units`)
-          .set('Authorization', authorization)
-          .set('Accept', 'text/html')
-          .expect(406, done);
-      });
-
-      it('should not find user', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units`)
-          .set('Authorization', authorization)
-          .set('Accept', 'text/html')
-          .expect(404, done);
+        it('should not find user', done => {
+          app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units`)
+            .set('Authorization', authorization)
+            .set('Accept', 'text/html')
+            .expect(404, done);
+        });
       });
     });
 
     describe('with anonymous user', () => {
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${target.name}/units`)
-          .set('Accept', 'application/hal+json')
-          .expect(401, done);
+      describe('with valid explorateur', () => {
+        it('should refuse access', done => {
+          app.get(`/explorateurs/${target.name}/units`)
+            .set('Accept', 'application/hal+json')
+            .expect(401, done);
+        });
+
+        it('should refuse access', done => {
+          app.get(`/explorateurs/${target.name}/units`)
+            .set('Accept', 'text/html')
+            .expect(401, done);
+        });
       });
 
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units`)
-          .set('Accept', 'application/hal+json')
-          .expect(401, done);
-      });
+      describe('with invalid explorateur', () => {
+        it('should refuse access', done => {
+          app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units`)
+            .set('Accept', 'application/hal+json')
+            .expect(401, done);
+        });
 
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${target.name}/units`)
-          .set('Accept', 'text/html')
-          .expect(401, done);
-      });
-
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units`)
-          .set('Accept', 'text/html')
-          .expect(401, done);
+        it('should refuse access', done => {
+          app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units`)
+            .set('Accept', 'text/html')
+            .expect(401, done);
+        });
       });
     });
   });
@@ -114,49 +122,55 @@ describe("Explorateur's units:", () => {
         authorization = authenticate(target, app);
       });
 
-      it('should return requested unit', done => {
-        app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
-          .set('Authorization', authorization)
-          .expect('Content-Type', 'application/json')
-          .set('Accept', 'application/json')
-          .expect(200)
-          .expect((response: request.Response) => validateOwnedUnit(JSON.parse(response.text)), done);
+      describe('with valid unit', () => {
+        it('should return requested unit', done => {
+          app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
+            .set('Authorization', authorization)
+            .expect('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .expect(200)
+            .expect((response: request.Response) => validateOwnedUnit(JSON.parse(response.text)), done);
+        });
+
+        it('should return not acceptable', done => {
+          app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
+            .set('Authorization', authorization)
+            .expect('Content-Type', 'application/json')
+            .set('Accept', 'text/html')
+            .expect(406, done);
+        });
       });
 
-      it('should not find unit', done => {
-        app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
-          .set('Authorization', authorization)
-          .set('Accept', 'application/json')
-          .expect(404, done);
+      describe("with another explorateur's unit", () => {
+        it('should not find unit', done => {
+          app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
+            .set('Authorization', authorization)
+            .set('Accept', 'application/json')
+            .expect(404, done);
+        });
+
+        it('should not find unit', done => {
+          app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
+            .set('Authorization', authorization)
+            .set('Accept', 'text/html')
+            .expect(404, done);
+        });
       });
 
-      it('should not find unit', done => {
-        app.get(`/explorateurs/${target.name}/units/${Entities.invalidUnitKey}`)
-          .set('Authorization', authorization)
-          .set('Accept', 'application/json')
-          .expect(404, done);
-      });
+      describe('with an invalid unit', () => {
+        it('should not find unit', done => {
+          app.get(`/explorateurs/${target.name}/units/${Entities.invalidUnitKey}`)
+            .set('Authorization', authorization)
+            .set('Accept', 'application/json')
+            .expect(404, done);
+        });
 
-      it('should return not acceptable', done => {
-        app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
-          .set('Authorization', authorization)
-          .expect('Content-Type', 'application/json')
-          .set('Accept', 'text/html')
-          .expect(406, done);
-      });
-
-      it('should not find unit', done => {
-        app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
-          .set('Authorization', authorization)
-          .set('Accept', 'text/html')
-          .expect(404, done);
-      });
-
-      it('should not find unit', done => {
-        app.get(`/explorateurs/${target.name}/units/${Entities.invalidUnitKey}`)
-          .set('Authorization', authorization)
-          .set('Accept', 'text/html')
-          .expect(404, done);
+        it('should not find unit', done => {
+          app.get(`/explorateurs/${target.name}/units/${Entities.invalidUnitKey}`)
+            .set('Authorization', authorization)
+            .set('Accept', 'text/html')
+            .expect(404, done);
+        });
       });
     });
 
@@ -165,132 +179,166 @@ describe("Explorateur's units:", () => {
         authorization = authenticate(Entities.validAuthentication[1], app);
       });
 
-      it('should return requested unit', done => {
-        app.get(`/explorateurs/${target.name}/units/${Entities.validUnitKeys.get(target.name)}`)
-          .set('Authorization', authorization)
-          .expect('Content-Type', 'application/json')
-          .set('Accept', 'application/json')
-          .expect(200)
-          .expect((response: request.Response) => validateOwnedUnit(JSON.parse(response.text)), done);
+      describe('with valid explorateur', () => {
+        describe('with valid unit', () => {
+          it('should return requested unit', done => {
+            app.get(`/explorateurs/${target.name}/units/${Entities.validUnitKeys.get(target.name)}`)
+              .set('Authorization', authorization)
+              .expect('Content-Type', 'application/json')
+              .set('Accept', 'application/json')
+              .expect(200)
+              .expect((response: request.Response) => validateOwnedUnit(JSON.parse(response.text)), done);
+          });
+
+          it('should return not acceptable', done => {
+            app.get(`/explorateurs/${target.name}/units/${Entities.validUnitKeys.get(target.name)}`)
+              .set('Authorization', authorization)
+              .set('Accept', 'text/html')
+              .expect(406, done);
+          });
+        });
+
+        describe("with another explorateur's unit", () => {
+          it('should not find unit', done => {
+            app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
+              .set('Authorization', authorization)
+              .set('Accept', 'application/json')
+              .expect(404, done);
+          });
+
+          it('should not find unit', done => {
+            app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
+              .set('Authorization', authorization)
+              .set('Accept', 'text/html')
+              .expect(404, done);
+          });
+        });
+
+        describe('with an invalid unit', () => {
+          it('should not find unit', done => {
+            app.get(`/explorateurs/${target.name}/units/${Entities.invalidUnitKey}`)
+              .set('Authorization', authorization)
+              .set('Accept', 'application/json')
+              .expect(404, done);
+          });
+
+          it('should not find unit', done => {
+            app.get(`/explorateurs/${target.name}/units/${Entities.invalidUnitKey}`)
+              .set('Authorization', authorization)
+              .set('Accept', 'text/html')
+              .expect(404, done);
+          });
+        });
       });
 
-      it('should not find unit', done => {
-        app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
-          .set('Authorization', authorization)
-          .set('Accept', 'application/json')
-          .expect(404, done);
-      });
+      describe('with invalid explorateur', () => {
+        describe('with a valid unit', () => {
+          it('should not find user', done => {
+            app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
+              .set('Authorization', authorization)
+              .set('Accept', 'application/json')
+              .expect(404, done);
+          });
 
-      it('should not find unit', done => {
-        app.get(`/explorateurs/${target.name}/units/${Entities.invalidUnitKey}`)
-          .set('Authorization', authorization)
-          .set('Accept', 'application/json')
-          .expect(404, done);
-      });
+          it('should not find user', done => {
+            app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
+              .set('Authorization', authorization)
+              .set('Accept', 'text/html')
+              .expect(404, done);
+          });
+        });
 
-      it('should not find user', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
-          .set('Authorization', authorization)
-          .set('Accept', 'application/json')
-          .expect(404, done);
-      });
+        describe('with an invalid unit', () => {
+          it('should not find user', done => {
+            app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${Entities.invalidUnitKey}`)
+              .set('Authorization', authorization)
+              .set('Accept', 'application/json')
+              .expect(404, done);
+          });
 
-      it('should not find user', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${Entities.invalidUnitKey}`)
-          .set('Authorization', authorization)
-          .set('Accept', 'application/json')
-          .expect(404, done);
-      });
-
-      it('should return not acceptable', done => {
-        app.get(`/explorateurs/${target.name}/units/${Entities.validUnitKeys.get(target.name)}`)
-          .set('Authorization', authorization)
-          .set('Accept', 'text/html')
-          .expect(406, done);
-      });
-
-      it('should not find unit', done => {
-        app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
-          .set('Authorization', authorization)
-          .set('Accept', 'text/html')
-          .expect(404, done);
-      });
-
-      it('should not find unit', done => {
-        app.get(`/explorateurs/${target.name}/units/${Entities.invalidUnitKey}`)
-          .set('Authorization', authorization)
-          .set('Accept', 'text/html')
-          .expect(404, done);
-      });
-
-      it('should not find user', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
-          .set('Authorization', authorization)
-          .set('Accept', 'text/html')
-          .expect(404, done);
-      });
-
-      it('should not find user', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${Entities.invalidUnitKey}`)
-          .set('Authorization', authorization)
-          .set('Accept', 'text/html')
-          .expect(404, done);
+          it('should not find user', done => {
+            app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${Entities.invalidUnitKey}`)
+              .set('Authorization', authorization)
+              .set('Accept', 'text/html')
+              .expect(404, done);
+          });
+        });
       });
     });
 
     describe('with anonymous user', () => {
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
-          .set('Accept', 'application/json')
-          .expect(401, done);
+      describe('with valid explorateur', () => {
+        describe('with valid unit', () => {
+          it('should refuse access', done => {
+            app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
+              .set('Accept', 'application/json')
+              .expect(401, done);
+          });
+
+          it('should refuse access', done => {
+            app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
+              .set('Accept', 'text/html')
+              .expect(401, done);
+          });
+        });
+
+        describe("with another explorateur's unit", () => {
+          it('should refuse access', done => {
+            app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
+              .set('Accept', 'application/json')
+              .expect(401, done);
+          });
+
+          it('should refuse access', done => {
+            app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
+              .set('Accept', 'text/html')
+              .expect(401, done);
+          });
+        });
+
+        describe('with an invalid unit', () => {
+          it('should refuse access', done => {
+            app.get(`/explorateurs/${target.name}/units/${Entities.invalidUnitKey}`)
+              .set('Accept', 'application/json')
+              .expect(401, done);
+          });
+
+          it('should refuse access', done => {
+            app.get(`/explorateurs/${target.name}/units/${Entities.invalidUnitKey}`)
+              .set('Accept', 'text/html')
+              .expect(401, done);
+          });
+        });
       });
 
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
-          .set('Accept', 'application/json')
-          .expect(401, done);
-      });
+      describe('with invalid explorateur', () => {
+        describe('with a valid unit', () => {
+          it('should refuse access', done => {
+            app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
+              .set('Accept', 'application/json')
+              .expect(401, done);
+          });
 
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${target.name}/units/${Entities.invalidUnitKey}`)
-          .set('Accept', 'application/json')
-          .expect(401, done);
-      });
+          it('should refuse access', done => {
+            app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
+              .set('Accept', 'text/html')
+              .expect(401, done);
+          });
+        });
 
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
-          .set('Accept', 'application/json')
-          .expect(401, done);
-      });
+        describe('with an invalid unit', () => {
+          it('should refuse access', done => {
+            app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${Entities.invalidUnitKey}`)
+              .set('Accept', 'application/json')
+              .expect(401, done);
+          });
 
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${Entities.invalidUnitKey}`)
-          .set('Accept', 'application/json')
-          .expect(401, done);
-      });
-
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
-          .set('Accept', 'text/html')
-          .expect(401, done);
-      });
-
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${target.name}/units/${Entities.invalidUnitKey}`)
-          .set('Accept', 'text/html')
-          .expect(401, done);
-      });
-
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
-          .set('Accept', 'text/html')
-          .expect(401, done);
-      });
-
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${Entities.invalidUnitKey}`)
-          .set('Accept', 'text/html')
-          .expect(401, done);
+          it('should refuse access', done => {
+            app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${Entities.invalidUnitKey}`)
+              .set('Accept', 'text/html')
+              .expect(401, done);
+          });
+        });
       });
     });
   });

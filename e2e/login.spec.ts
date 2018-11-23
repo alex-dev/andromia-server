@@ -16,46 +16,46 @@ describe('Login:', () => {
 
   describe('POST /login', () => {
     describe('with valid credentials', () => {
-      it('should allow connection', done => {
+      it('should allow connection and return explorateur', done => {
         app.post('/login')
           .set('Accept', 'application/json')
           .set('Content-Type', 'application/json')
           .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
-          .expect('Authorization')
+          .expect('X-Token', /.*/)
           .expect(200)
           .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), false, false), done);
       });
 
-      it('should allow connection with expand units', done => {
+      it('should allow connection and return explorateur with expanded units', done => {
         app.post('/login?expand=units')
           .set('Accept', 'application/json')
           .set('Content-Type', 'application/json')
           .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
-          .expect('Authorization')
+          .expect('X-Token', /.*/)
           .expect(200)
           .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), true, false), done);
       });
 
-      it('should allow connection with expand explorations', done => {
+      it('should allow connection and return explorateur with expanded explorations', done => {
         app.post('/login?expand=explorations')
           .set('Accept', 'application/json')
           .set('Content-Type', 'application/json')
           .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
-          .expect('Authorization')
+          .expect('X-Token', /.*/)
           .expect(200)
           .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), false, true), done);
       });
 
-      it('should allow connection with expand explorations and units', done => {
+      it('should allow connection and return explorateur with expanded explorations and units', done => {
         app.post('/login?expend=explorations,units')
           .set('Accept', 'application/json')
           .set('Content-Type', 'application/json')
           .send(Entities.validAuthentication[0])
           .expect('Content-Type', 'application/json')
-          .expect('Authorization')
+          .expect('X-Token', /.*/)
           .expect(200)
           .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), true, true), done);
       });

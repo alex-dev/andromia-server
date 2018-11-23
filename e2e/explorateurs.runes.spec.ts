@@ -47,60 +47,68 @@ describe("Explorateur's runes", () => {
         authorization = authenticate(other, app);
       });
 
-      it('should return runes', done => {
-        app.get(`/explorateurs/${target.name}/runes`)
-          .set('Authorization', authorization)
-          .set('Accept', 'application/json')
-          .expect('Content-Type', 'application/json')
-          .expect(200)
-          .expect((response: request.Response) => validateRunesCounts(JSON.parse(response.text)), done);
+      describe('with valid explorateur', () => {
+        it('should return runes', done => {
+          app.get(`/explorateurs/${target.name}/runes`)
+            .set('Authorization', authorization)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', 'application/json')
+            .expect(200)
+            .expect((response: request.Response) => validateRunesCounts(JSON.parse(response.text)), done);
+        });
+        
+        it('should return not acceptable', done => {
+          app.get(`/explorateurs/${target.name}/runes`)
+            .set('Authorization', authorization)
+            .set('Accept', 'text/html')
+            .expect(406, done);
+        });
       });
 
-      it('should not find user', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/runes`)
-          .set('Authorization', authorization)
-          .set('Accept', 'application/json')
-          .expect(404, done);
-      });
+      describe('with invalid explorateur', () => {
+        it('should not find user', done => {
+          app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/runes`)
+            .set('Authorization', authorization)
+            .set('Accept', 'application/json')
+            .expect(404, done);
+        });
 
-      it('should return not acceptable', done => {
-        app.get(`/explorateurs/${target.name}/runes`)
-          .set('Authorization', authorization)
-          .set('Accept', 'text/html')
-          .expect(406, done);
-      });
-
-      it('should not find user', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/runes`)
-          .set('Authorization', authorization)
-          .set('Accept', 'text/html')
-          .expect(404, done);
+        it('should not find user', done => {
+          app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/runes`)
+            .set('Authorization', authorization)
+            .set('Accept', 'text/html')
+            .expect(404, done);
+        });
       });
     });
 
     describe('with anonymous user', () => {
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${target.name}/runes`)
-          .set('Accept', 'application/json')
-          .expect(401, done);
+      describe('with valid explorateur', () => {
+        it('should refuse access', done => {
+          app.get(`/explorateurs/${target.name}/runes`)
+            .set('Accept', 'application/json')
+            .expect(401, done);
+        });
+        
+        it('should refuse access', done => {
+          app.get(`/explorateurs/${target.name}/runes`)
+            .set('Accept', 'text/html')
+            .expect(401, done);
+        });
       });
 
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/runes`)
-          .set('Accept', 'application/json')
-          .expect(401, done);
-      });
+      describe('with invalid explorateur', () => {
+        it('should refuse access', done => {
+          app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/runes`)
+            .set('Accept', 'application/json')
+            .expect(401, done);
+        });
 
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${target.name}/runes`)
-          .set('Accept', 'text/html')
-          .expect(401, done);
-      });
-
-      it('should refuse access', done => {
-        app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/runes`)
-          .set('Accept', 'text/html')
-          .expect(401, done);
+        it('should refuse access', done => {
+          app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/runes`)
+            .set('Accept', 'text/html')
+            .expect(401, done);
+        });
       });
     });
   });
