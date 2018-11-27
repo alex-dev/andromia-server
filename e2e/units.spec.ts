@@ -26,7 +26,7 @@ describe('Units:', () => {
     });
 
     it('should return not acceptable', done => {
-      app.get('/runes')
+      app.get('/units')
         .set('Accept', 'text/html')
         .expect(406, done);
     });

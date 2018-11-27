@@ -118,12 +118,6 @@ describe("Explorateur's units:", () => {
   });
 
   describe('POST /explorateurs/{name}/explorations', () => {
-    let model: MongooseModel<string>; // TODO Replace with proper type once created.
-
-    beforeEach(inject([string], (express: ExpressApplication) => {
-      app = request(express);
-    }));
-  
     describe('with authenticated user being target explorateur', () => {
       beforeEach(() => {
         authorization = authenticate(target, app);

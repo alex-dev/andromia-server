@@ -20,7 +20,20 @@ describe("Explorateur:", () => {
   }));
 
   describe('GET /explorateurs', () => {
-    // TODO
+    it('should return all known explorateurs', done => {
+      app.get('/explorateurs')
+        .set('Accept', 'application/hal+json')
+        .expect('Content-Type', 'application/hal+json')
+        .expect(200)
+        .expect(response => validateCollection(JSON.parse(response.text)))
+        .expect((response: request.Response) => validateExplorateurs(JSON.parse(response.text).items), done);
+    });
+
+    it('should return not acceptable', done => {
+      app.get('/explorateurs')
+        .set('Accept', 'text/html')
+        .expect(406, done);
+    });
   });
 
   describe('POST /explorateurs', () => {
@@ -28,7 +41,35 @@ describe("Explorateur:", () => {
   });
 
   describe('GET /explorateurs/{name}', () => {
-    // TODO
+    describe('with valid unit', () => {
+      it('should return a known unit by its name', done => {
+        app.get(`/explorateurs/${Entities.validAuthentication[0]}`)
+          .set('Accept', 'application/json')
+          .expect('Content-Type', 'application/json')
+          .expect(200)
+          .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text)), done);
+      });
+
+      it('should return not acceptable', done => {
+        app.get(`/units/${Entities.validAuthentication[0]}`)
+          .set('Accept', 'text/html')
+          .expect(406, done);
+      });
+    });
+
+    describe('with an invalid unit', () => {
+      it('should not find unit', done => {
+        app.get(`/units/${Entities.invalidAuthentication}`)
+          .set('Accept', 'application/json')
+          .expect(404, done);
+      });
+
+      it('should not find unit', done => {
+        app.get(`/units/${Entities.invalidAuthentication}`)
+          .set('Accept', 'text/html')
+          .expect(404, done);
+      });
+    });
   });
 
   describe('PUT /explorateurs/{name}', () => {
