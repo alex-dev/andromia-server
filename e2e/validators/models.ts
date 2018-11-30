@@ -72,7 +72,8 @@ export function validateExploration(data: any) {
   validateDate(data, 'started');
   validateDate(data, 'ended');
   validateRuneDictionnary(data, 'runes');
-  expect(data).to.haveOwnProperty('location').that.is.a('string');
+  expect(data).to.haveOwnProperty('from').that.is.a('string');
+  expect(data).to.haveOwnProperty('to').that.is.a('string');
   expect(data).to.haveOwnProperty('unit').that.is.an('object');
   expect(data.unit).to.haveOwnProperty('accepted').that.is.a('boolean');
   expect(data.unit).to.haveOwnProperty('unit').that.is.an('object');

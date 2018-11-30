@@ -1,12 +1,12 @@
 import { ExpressApplication } from '@tsed/common';
 import { bootstrap, inject } from '@tsed/testing';
-import { MongooseModel } from '@tsed/mongoose';
 import { describe, beforeEach, it } from 'mocha';
 import { Server } from '../src/server';
 import { authenticate } from './authenticator/authenticator';
 import { Entities } from './database/entities';
 import { validateCollection } from './validators/halson';
 import { validateExplorateur, validateExploration, validateExplorations } from './validators/models';
+import * as moment from 'moment';
 import * as request from 'supertest';
 
 describe("Explorateur's units:", () => {
@@ -128,7 +128,15 @@ describe("Explorateur's units:", () => {
           app.post(`/explorateurs/${target.name}/explorations`)
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
-            .send({})
+            .send({
+              started: moment.utc(),
+              ended: moment.utc(),
+              runes: {
+                air: 2,
+                darkness: 3
+              },
+              to: "Inoxis"
+            })
             .expect(201)
             .expect('Location', /.*/)
             .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), false, false))
@@ -144,7 +152,15 @@ describe("Explorateur's units:", () => {
           app.post(`/explorateurs/${target.name}/explorations?expend=units`)
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
-            .send({})
+            .send({
+              started: moment.utc(),
+              ended: moment.utc(),
+              runes: {
+                air: 2,
+                darkness: 3
+              },
+              to: "Inoxis"
+            })
             .expect(201)
             .expect('Location', /.*/)
             .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), true, false), done)
@@ -160,7 +176,15 @@ describe("Explorateur's units:", () => {
           app.post(`/explorateurs/${target.name}/explorations?expend=explorations`)
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
-            .send({})
+            .send({
+              started: moment.utc(),
+              ended: moment.utc(),
+              runes: {
+                air: 2,
+                darkness: 3
+              },
+              to: "Inoxis"
+            })
             .expect(201)
             .expect('Location', /.*/)
             .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), false, true), done)
@@ -176,7 +200,15 @@ describe("Explorateur's units:", () => {
           app.post(`/explorateurs/${target.name}/explorations?expend=explorations,units`)
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
-            .send({})
+            .send({
+              started: moment.utc(),
+              ended: moment.utc(),
+              runes: {
+                air: 2,
+                darkness: 3
+              },
+              to: "Inoxis"
+            })
             .expect(201)
             .expect('Location', /.*/)
             .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), true, true), done)
@@ -193,7 +225,15 @@ describe("Explorateur's units:", () => {
             .set('Authorization', authorization)
             .set('Accept', 'text/html')
             .set('Content-Type', 'application/json')
-            .send({})
+            .send({
+              started: moment.utc(),
+              ended: moment.utc(),
+              runes: {
+                air: 2,
+                darkness: 3
+              },
+              to: "Inoxis"
+            })
             .expect(406, done);
         });
       });
@@ -224,7 +264,15 @@ describe("Explorateur's units:", () => {
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
             .set('Content-Type', 'text/html')
-            .send({})
+            .send({
+              started: moment.utc(),
+              ended: moment.utc(),
+              runes: {
+                air: 2,
+                darkness: 3
+              },
+              to: "Inoxis"
+            })
             .expect(415, done);
         });
   
@@ -233,7 +281,15 @@ describe("Explorateur's units:", () => {
             .set('Authorization', authorization)
             .set('Accept', 'text/html')
             .set('Content-Type', 'text/html')
-            .send({})
+            .send({
+              started: moment.utc(),
+              ended: moment.utc(),
+              runes: {
+                air: 2,
+                darkness: 3
+              },
+              to: "Inoxis"
+            })
             .expect(415, done);
         });
       });
@@ -307,7 +363,15 @@ describe("Explorateur's units:", () => {
             app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
               .set('Authorization', authorization)
               .set('Accept', 'application/json')
-              .send({})
+              .send({
+                started: moment.utc(),
+                ended: moment.utc(),
+                runes: {
+                  air: 2,
+                  darkness: 3
+                },
+                to: "Inoxis"
+              })
               .expect(403, done);
           });
   
@@ -316,7 +380,15 @@ describe("Explorateur's units:", () => {
               .set('Authorization', authorization)
               .set('Accept', 'text/html')
               .set('Content-Type', 'application/json')
-              .send({})
+              .send({
+                started: moment.utc(),
+                ended: moment.utc(),
+                runes: {
+                  air: 2,
+                  darkness: 3
+                },
+                to: "Inoxis"
+              })
               .expect(403, done);
           });
         });
@@ -347,7 +419,15 @@ describe("Explorateur's units:", () => {
               .set('Authorization', authorization)
               .set('Accept', 'application/json')
               .set('Content-Type', 'text/html')
-              .send({})
+              .send({
+                started: moment.utc(),
+                ended: moment.utc(),
+                runes: {
+                  air: 2,
+                  darkness: 3
+                },
+                to: "Inoxis"
+              })
               .expect(403, done);
           });
     
@@ -356,7 +436,15 @@ describe("Explorateur's units:", () => {
               .set('Authorization', authorization)
               .set('Accept', 'text/html')
               .set('Content-Type', 'text/html')
-              .send({})
+              .send({
+                started: moment.utc(),
+                ended: moment.utc(),
+                runes: {
+                  air: 2,
+                  darkness: 3
+                },
+                to: "Inoxis"
+              })
               .expect(403, done);
           });
         });
@@ -369,7 +457,15 @@ describe("Explorateur's units:", () => {
           it('should refuse access', done => {
             app.post(`/explorateurs/${target.name}/explorations`)
               .set('Accept', 'application/json')
-              .send({})
+              .send({
+                started: moment.utc(),
+                ended: moment.utc(),
+                runes: {
+                  air: 2,
+                  darkness: 3
+                },
+                to: "Inoxis"
+              })
               .expect(401, done);
           });
   
@@ -377,7 +473,15 @@ describe("Explorateur's units:", () => {
             app.post(`/explorateurs/${target.name}/explorations`)
               .set('Accept', 'text/html')
               .set('Content-Type', 'application/json')
-              .send({})
+              .send({
+                started: moment.utc(),
+                ended: moment.utc(),
+                runes: {
+                  air: 2,
+                  darkness: 3
+                },
+                to: "Inoxis"
+              })
               .expect(401, done);
           });
         });
@@ -405,7 +509,15 @@ describe("Explorateur's units:", () => {
             app.post(`/explorateurs/${target.name}/explorations`)
               .set('Accept', 'application/json')
               .set('Content-Type', 'text/html')
-              .send({})
+              .send({
+                started: moment.utc(),
+                ended: moment.utc(),
+                runes: {
+                  air: 2,
+                  darkness: 3
+                },
+                to: "Inoxis"
+              })
               .expect(401, done);
           });
     
@@ -413,7 +525,15 @@ describe("Explorateur's units:", () => {
             app.post(`/explorateurs/${target.name}/explorations`)
               .set('Accept', 'text/html')
               .set('Content-Type', 'text/html')
-              .send({})
+              .send({
+                started: moment.utc(),
+                ended: moment.utc(),
+                runes: {
+                  air: 2,
+                  darkness: 3
+                },
+                to: "Inoxis"
+              })
               .expect(401, done);
           });
         });
@@ -424,7 +544,15 @@ describe("Explorateur's units:", () => {
           it('should refuse access', done => {
             app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
               .set('Accept', 'application/json')
-              .send({})
+              .send({
+                started: moment.utc(),
+                ended: moment.utc(),
+                runes: {
+                  air: 2,
+                  darkness: 3
+                },
+                to: "Inoxis"
+              })
               .expect(401, done);
           });
   
@@ -432,7 +560,15 @@ describe("Explorateur's units:", () => {
             app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
               .set('Accept', 'text/html')
               .set('Content-Type', 'application/json')
-              .send({})
+              .send({
+                started: moment.utc(),
+                ended: moment.utc(),
+                runes: {
+                  air: 2,
+                  darkness: 3
+                },
+                to: "Inoxis"
+              })
               .expect(401, done);
           });
         });
@@ -460,7 +596,15 @@ describe("Explorateur's units:", () => {
             app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
               .set('Accept', 'application/json')
               .set('Content-Type', 'text/html')
-              .send({})
+              .send({
+                started: moment.utc(),
+                ended: moment.utc(),
+                runes: {
+                  air: 2,
+                  darkness: 3
+                },
+                to: "Inoxis"
+              })
               .expect(401, done);
           });
     
@@ -468,7 +612,15 @@ describe("Explorateur's units:", () => {
             app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
               .set('Accept', 'text/html')
               .set('Content-Type', 'text/html')
-              .send({})
+              .send({
+                started: moment.utc(),
+                ended: moment.utc(),
+                runes: {
+                  air: 2,
+                  darkness: 3
+                },
+                to: "Inoxis"
+              })
               .expect(401, done);
           });
         });
