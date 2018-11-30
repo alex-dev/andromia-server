@@ -221,7 +221,7 @@ describe("Explorateur's units:", () => {
             .set('Accept', 'application/json')
             .set('Content-Type', 'text/html')
             .send({})
-            .expect(422, done);
+            .expect(415, done);
         });
   
         it('should inform', done => {
@@ -229,7 +229,7 @@ describe("Explorateur's units:", () => {
             .set('Accept', 'text/html')
             .set('Content-Type', 'text/html')
             .send({})
-            .expect(422, done);
+            .expect(415, done);
         });
       });
     });

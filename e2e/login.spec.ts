@@ -111,7 +111,7 @@ describe('Login:', () => {
           .set('Accept', 'application/json')
           .set('Content-Type', 'text/html')
           .send(Entities.validAuthentication[0])
-          .expect(422, done);
+          .expect(415, done);
       });
 
       it('should inform', done => {
@@ -119,7 +119,7 @@ describe('Login:', () => {
           .set('Accept', 'text/html')
           .set('Content-Type', 'text/html')
           .send(Entities.validAuthentication[0])
-          .expect(422, done);
+          .expect(415, done);
       });
     });
   });
