@@ -50,7 +50,7 @@ describe('Login:', () => {
       });
 
       it('should allow connection and return explorateur with expanded explorations and units', done => {
-        app.post('/login?expend=explorations,units')
+        app.post('/login?expand=explorations,units')
           .set('Accept', 'application/json')
           .set('Content-Type', 'application/json')
           .send(Entities.validAuthentication[0])

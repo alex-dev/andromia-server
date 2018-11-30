@@ -141,7 +141,7 @@ describe("Explorateur's units:", () => {
         });
 
         it('should create exploration and return explorateur with expanded units', done => {
-          app.post(`/explorateurs/${target.name}/explorations?expend=units`)
+          app.post(`/explorateurs/${target.name}/explorations?expand=units`)
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
             .send({})
@@ -157,7 +157,7 @@ describe("Explorateur's units:", () => {
         });
 
         it('should create exploration and return explorateur with expanded explorations', done => {
-          app.post(`/explorateurs/${target.name}/explorations?expend=explorations`)
+          app.post(`/explorateurs/${target.name}/explorations?expand=explorations`)
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
             .send({})
@@ -173,7 +173,7 @@ describe("Explorateur's units:", () => {
         });
 
         it('should create exploration and return explorateur with expanded explorations and units', done => {
-          app.post(`/explorateurs/${target.name}/explorations?expend=explorations,units`)
+          app.post(`/explorateurs/${target.name}/explorations?expand=explorations,units`)
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
             .send({})
