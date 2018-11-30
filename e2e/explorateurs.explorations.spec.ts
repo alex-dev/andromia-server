@@ -141,7 +141,7 @@ describe("Explorateur's units:", () => {
         });
 
         it('should create exploration and return explorateur with expanded units', done => {
-          app.post(`/explorateurs/${target.name}/explorations`)
+          app.post(`/explorateurs/${target.name}/explorations?expend=units`)
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
             .send({})
@@ -157,7 +157,7 @@ describe("Explorateur's units:", () => {
         });
 
         it('should create exploration and return explorateur with expanded explorations', done => {
-          app.post(`/explorateurs/${target.name}/explorations`)
+          app.post(`/explorateurs/${target.name}/explorations?expend=explorations`)
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
             .send({})
@@ -173,7 +173,7 @@ describe("Explorateur's units:", () => {
         });
 
         it('should create exploration and return explorateur with expanded explorations and units', done => {
-          app.post(`/explorateurs/${target.name}/explorations`)
+          app.post(`/explorateurs/${target.name}/explorations?expend=explorations,units`)
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
             .send({})
@@ -190,9 +190,10 @@ describe("Explorateur's units:", () => {
 
         it('should return not acceptable', done => {
           app.post(`/explorateurs/${target.name}/explorations`)
+            .set('Authorization', authorization)
             .set('Accept', 'text/html')
             .set('Content-Type', 'application/json')
-            .send(Entities.validAuthentication[0])
+            .send({})
             .expect(406, done);
         });
       });
@@ -200,6 +201,7 @@ describe("Explorateur's units:", () => {
       describe('with unprocessable body', () => {
         it('should inform', done => {
           app.post(`/explorateurs/${target.name}/explorations`)
+            .set('Authorization', authorization)
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .send({ invalid: true })
@@ -208,6 +210,7 @@ describe("Explorateur's units:", () => {
 
         it('should inform', done => {
           app.post(`/explorateurs/${target.name}/explorations`)
+            .set('Authorization', authorization)
             .set('Accept', 'text/html')
             .set('Content-Type', 'application/json')
             .send({ invalid: true })
@@ -218,6 +221,7 @@ describe("Explorateur's units:", () => {
       describe('with invalid content type', () => {
         it('should inform', done => {
           app.post(`/explorateurs/${target.name}/explorations`)
+            .set('Authorization', authorization)
             .set('Accept', 'application/json')
             .set('Content-Type', 'text/html')
             .send({})
@@ -226,6 +230,7 @@ describe("Explorateur's units:", () => {
   
         it('should inform', done => {
           app.post(`/explorateurs/${target.name}/explorations`)
+            .set('Authorization', authorization)
             .set('Accept', 'text/html')
             .set('Content-Type', 'text/html')
             .send({})
@@ -241,128 +246,232 @@ describe("Explorateur's units:", () => {
 
       describe('with valid explorateur', () => {
         describe('with valid exploration', () => {
-          it('should create exploration and return explorateur', done => {
+          it('should return forbidden', done => {
             app.post(`/explorateurs/${target.name}/explorations`)
               .set('Authorization', authorization)
               .set('Accept', 'application/json')
               .send({})
-              .expect(201)
-              .expect('Location', /.*/)
-              .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), false, false))
-              .expect((response: request.Response) => {
-                app.get(response.get('Location'))
-                  .expect(200)
-                  .expect('Content-Type', 'application/json')
-                  .expect((response: request.Response) => validateExploration(JSON.parse(response.text)), () => { });
-              }, done);
+              .expect(403, done);
           });
   
-          it('should create exploration and return explorateur with expanded units', done => {
+          it('should return forbidden', done => {
             app.post(`/explorateurs/${target.name}/explorations`)
               .set('Authorization', authorization)
-              .set('Accept', 'application/json')
-              .send({})
-              .expect(201)
-              .expect('Location', /.*/)
-              .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), true, false), done)
-              .expect((response: request.Response) => {
-                app.get(response.get('Location'))
-                  .expect(200)
-                  .expect('Content-Type', 'application/json')
-                  .expect((response: request.Response) => validateExploration(JSON.parse(response.text)), () => { });
-              }, done);
-          });
-  
-          it('should create exploration and return explorateur with expanded explorations', done => {
-            app.post(`/explorateurs/${target.name}/explorations`)
-              .set('Authorization', authorization)
-              .set('Accept', 'application/json')
-              .send({})
-              .expect(201)
-              .expect('Location', /.*/)
-              .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), false, true), done)
-              .expect((response: request.Response) => {
-                app.get(response.get('Location'))
-                  .expect(200)
-                  .expect('Content-Type', 'application/json')
-                  .expect((response: request.Response) => validateExploration(JSON.parse(response.text)), () => { });
-              }, done);
-          });
-  
-          it('should create exploration and return explorateur with expanded explorations and units', done => {
-            app.post(`/explorateurs/${target.name}/explorations`)
-              .set('Authorization', authorization)
-              .set('Accept', 'application/json')
-              .send({})
-              .expect(201)
-              .expect('Location', /.*/)
-              .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), true, true), done)
-              .expect((response: request.Response) => {
-                app.get(response.get('Location'))
-                  .expect(200)
-                  .expect('Content-Type', 'application/json')
-                  .expect((response: request.Response) => validateExploration(JSON.parse(response.text)), () => { });
-              }, done);
-          });
-  
-          it('should return not acceptable', done => {
-            app.post(`/explorateurs/${target.name}/explorations`)
               .set('Accept', 'text/html')
               .set('Content-Type', 'application/json')
-              .send(Entities.validAuthentication[0])
-              .expect(406, done);
+              .send({})
+              .expect(403, done);
           });
         });
   
         describe('with unprocessable body', () => {
-          it('should inform', done => {
+          it('should return forbidden', done => {
             app.post(`/explorateurs/${target.name}/explorations`)
               .set('Accept', 'application/json')
               .set('Content-Type', 'application/json')
               .send({ invalid: true })
-              .expect(422, done);
+              .expect(403, done);
           });
   
-          it('should inform', done => {
+          it('should return forbidden', done => {
             app.post(`/explorateurs/${target.name}/explorations`)
               .set('Accept', 'text/html')
               .set('Content-Type', 'application/json')
               .send({ invalid: true })
-              .expect(422, done);
+              .expect(403, done);
           });
         });
   
         describe('with invalid content type', () => {
-          it('should inform', done => {
+          it('should return forbidden', done => {
             app.post(`/explorateurs/${target.name}/explorations`)
               .set('Accept', 'application/json')
               .set('Content-Type', 'text/html')
               .send({})
-              .expect(422, done);
+              .expect(403, done);
           });
     
-          it('should inform', done => {
+          it('should return forbidden', done => {
             app.post(`/explorateurs/${target.name}/explorations`)
               .set('Accept', 'text/html')
               .set('Content-Type', 'text/html')
               .send({})
-              .expect(422, done);
+              .expect(403, done);
           });
         });
       });
 
       describe('with invalid explorateur', () => {
-
+        describe('with valid exploration', () => {
+          it('should return forbidden', done => {
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+              .set('Authorization', authorization)
+              .set('Accept', 'application/json')
+              .send({})
+              .expect(403, done);
+          });
+  
+          it('should return forbidden', done => {
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+              .set('Authorization', authorization)
+              .set('Accept', 'text/html')
+              .set('Content-Type', 'application/json')
+              .send({})
+              .expect(403, done);
+          });
+        });
+  
+        describe('with unprocessable body', () => {
+          it('should return forbidden', done => {
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+              .set('Authorization', authorization)
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .send({ invalid: true })
+              .expect(403, done);
+          });
+  
+          it('should return forbidden', done => {
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+              .set('Authorization', authorization)
+              .set('Accept', 'text/html')
+              .set('Content-Type', 'application/json')
+              .send({ invalid: true })
+              .expect(403, done);
+          });
+        });
+  
+        describe('with invalid content type', () => {
+          it('should return forbidden', done => {
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+              .set('Authorization', authorization)
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'text/html')
+              .send({})
+              .expect(403, done);
+          });
+    
+          it('should return forbidden', done => {
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+              .set('Authorization', authorization)
+              .set('Accept', 'text/html')
+              .set('Content-Type', 'text/html')
+              .send({})
+              .expect(403, done);
+          });
+        });
       });
     });
 
     describe('with anonymous user', () => {
       describe('with valid explorateur', () => {
-
+        describe('with valid exploration', () => {
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${target.name}/explorations`)
+              .set('Accept', 'application/json')
+              .send({})
+              .expect(401, done);
+          });
+  
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${target.name}/explorations`)
+              .set('Accept', 'text/html')
+              .set('Content-Type', 'application/json')
+              .send({})
+              .expect(401, done);
+          });
+        });
+  
+        describe('with unprocessable body', () => {
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${target.name}/explorations`)
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .send({ invalid: true })
+              .expect(401, done);
+          });
+  
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${target.name}/explorations`)
+              .set('Accept', 'text/html')
+              .set('Content-Type', 'application/json')
+              .send({ invalid: true })
+              .expect(401, done);
+          });
+        });
+  
+        describe('with invalid content type', () => {
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${target.name}/explorations`)
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'text/html')
+              .send({})
+              .expect(401, done);
+          });
+    
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${target.name}/explorations`)
+              .set('Accept', 'text/html')
+              .set('Content-Type', 'text/html')
+              .send({})
+              .expect(401, done);
+          });
+        });
       });
 
       describe('with invalid explorateur', () => {
-
+        describe('with valid exploration', () => {
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+              .set('Accept', 'application/json')
+              .send({})
+              .expect(401, done);
+          });
+  
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+              .set('Accept', 'text/html')
+              .set('Content-Type', 'application/json')
+              .send({})
+              .expect(401, done);
+          });
+        });
+  
+        describe('with unprocessable body', () => {
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .send({ invalid: true })
+              .expect(401, done);
+          });
+  
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+              .set('Accept', 'text/html')
+              .set('Content-Type', 'application/json')
+              .send({ invalid: true })
+              .expect(401, done);
+          });
+        });
+  
+        describe('with invalid content type', () => {
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'text/html')
+              .send({})
+              .expect(401, done);
+          });
+    
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+              .set('Accept', 'text/html')
+              .set('Content-Type', 'text/html')
+              .send({})
+              .expect(401, done);
+          });
+        });
       });
     });
   });
