@@ -9,7 +9,7 @@ import { validateExplorateur, validateExploration, validateExplorations } from '
 import * as moment from 'moment';
 import * as request from 'supertest';
 
-describe("Explorateur's units:", () => {
+describe("Explorateur's explorations:", () => {
   const target = Entities.validAuthentication[0];
   const other = Entities.validAuthentication[1];
 
