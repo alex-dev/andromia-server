@@ -22,8 +22,8 @@ describe("Explorateur's units:", () => {
 
   describe('GET /explorateurs/{name}/units', () => {
     describe('with authenticated user being target explorateur', () => {      
-      beforeEach(() => {
-        authorization = authenticate(target, app);
+      beforeEach(done => {
+        authenticate(target, app, res => authorization = res, done);
       });
 
       it('should return all units owned by explorateur', done => {
@@ -39,14 +39,14 @@ describe("Explorateur's units:", () => {
       it('should return not acceptable', done => {
         app.get(`/explorateurs/${target.name}/units`)
           .set('Authorization', authorization)
-          .set('Accept', 'text/html')
+          .set('Accept', 'text/plain')
           .expect(406, done);
       });
     });
 
     describe('with authenticated user not being target explorateur', () => {
-      beforeEach(() => {
-        authorization = authenticate(other, app);
+      beforeEach(done => {
+        authenticate(other, app, res => authorization = res, done);
       });
 
       describe('with valid explorateur', () => {
@@ -63,7 +63,7 @@ describe("Explorateur's units:", () => {
         it('should return not acceptable', done => {
           app.get(`/explorateurs/${target.name}/units`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(406, done);
         });
       });
@@ -79,7 +79,7 @@ describe("Explorateur's units:", () => {
         it('should not find user', done => {
           app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(404, done);
         });
       });
@@ -95,7 +95,7 @@ describe("Explorateur's units:", () => {
 
         it('should refuse access', done => {
           app.get(`/explorateurs/${target.name}/units`)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(401, done);
         });
       });
@@ -109,7 +109,7 @@ describe("Explorateur's units:", () => {
 
         it('should refuse access', done => {
           app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units`)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(401, done);
         });
       });
@@ -118,8 +118,8 @@ describe("Explorateur's units:", () => {
 
   describe('GET /explorateurs/{name}/units/{uuid}', () => {
     describe('with authenticated user being target explorateur', () => {
-      beforeEach(() => {
-        authorization = authenticate(target, app);
+      beforeEach(done => {
+        authenticate(target, app, res => authorization = res, done);
       });
 
       describe('with valid unit', () => {
@@ -136,7 +136,7 @@ describe("Explorateur's units:", () => {
           app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
             .set('Authorization', authorization)
             .expect('Content-Type', 'application/json')
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(406, done);
         });
       });
@@ -152,7 +152,7 @@ describe("Explorateur's units:", () => {
         it('should not find unit', done => {
           app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(404, done);
         });
       });
@@ -168,15 +168,15 @@ describe("Explorateur's units:", () => {
         it('should not find unit', done => {
           app.get(`/explorateurs/${target.name}/units/${Entities.invalidUnitKey}`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(404, done);
         });
       });
     });
 
     describe('with authenticated user not being target explorateur', () => {
-      beforeEach(() => {
-        authorization = authenticate(Entities.validAuthentication[1], app);
+      beforeEach(done => {
+        authenticate(other, app, res => authorization = res, done);
       });
 
       describe('with valid explorateur', () => {
@@ -193,7 +193,7 @@ describe("Explorateur's units:", () => {
           it('should return not acceptable', done => {
             app.get(`/explorateurs/${target.name}/units/${Entities.validUnitKeys.get(target.name)}`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(406, done);
           });
         });
@@ -209,7 +209,7 @@ describe("Explorateur's units:", () => {
           it('should not find unit', done => {
             app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(404, done);
           });
         });
@@ -225,7 +225,7 @@ describe("Explorateur's units:", () => {
           it('should not find unit', done => {
             app.get(`/explorateurs/${target.name}/units/${Entities.invalidUnitKey}`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(404, done);
           });
         });
@@ -243,7 +243,7 @@ describe("Explorateur's units:", () => {
           it('should not find user', done => {
             app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(404, done);
           });
         });
@@ -259,7 +259,7 @@ describe("Explorateur's units:", () => {
           it('should not find user', done => {
             app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${Entities.invalidUnitKey}`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(404, done);
           });
         });
@@ -277,7 +277,7 @@ describe("Explorateur's units:", () => {
 
           it('should refuse access', done => {
             app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(401, done);
           });
         });
@@ -291,7 +291,7 @@ describe("Explorateur's units:", () => {
 
           it('should refuse access', done => {
             app.get(`/explorateurs/${target.name}/units/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(401, done);
           });
         });
@@ -305,7 +305,7 @@ describe("Explorateur's units:", () => {
 
           it('should refuse access', done => {
             app.get(`/explorateurs/${target.name}/units/${Entities.invalidUnitKey}`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(401, done);
           });
         });
@@ -321,7 +321,7 @@ describe("Explorateur's units:", () => {
 
           it('should refuse access', done => {
             app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(401, done);
           });
         });
@@ -335,7 +335,7 @@ describe("Explorateur's units:", () => {
 
           it('should refuse access', done => {
             app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/units/${Entities.invalidUnitKey}`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(401, done);
           });
         });

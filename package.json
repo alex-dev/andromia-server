@@ -6,7 +6,7 @@
   "main": "build/app.js",
   "scripts": {
     "build": "npm run transpile:prod",
-    "test:e2e": "npm run transpile:test && mocha --reporter spec --check-leaks --bail tests/",
+    "test:e2e": "npm run transpile:test && mocha --reporter spec --check-leaks --bail build-test/e2e/",
     "tslint": "tslint ./src/*.ts",
     "transpile:test": "tsc --project tsconfig.test.json",
     "transpile:prod": "tsc --project tsconfig.prod.json",

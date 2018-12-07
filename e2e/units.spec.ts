@@ -27,7 +27,7 @@ describe('Units:', () => {
 
     it('should return not acceptable', done => {
       app.get('/units')
-        .set('Accept', 'text/html')
+        .set('Accept', 'text/plain')
         .expect(406, done);
     });
   });
@@ -44,7 +44,7 @@ describe('Units:', () => {
 
       it('should return not acceptable', done => {
         app.get(`/units/${Entities.validUnit}`)
-          .set('Accept', 'text/html')
+          .set('Accept', 'text/plain')
           .expect(406, done);
       });
     });
@@ -58,7 +58,7 @@ describe('Units:', () => {
 
       it('should not find unit', done => {
         app.get(`/units/${Entities.invalidUnit}`)
-          .set('Accept', 'text/html')
+          .set('Accept', 'text/plain')
           .expect(404, done);
       });
     });

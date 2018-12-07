@@ -62,7 +62,7 @@ describe('Login:', () => {
 
       it('should return not acceptable', done => {
         app.post('/login')
-          .set('Accept', 'text/html')
+          .set('Accept', 'text/plain')
           .set('Content-Type', 'application/json')
           .send(Entities.validAuthentication[0])
           .expect(406, done);
@@ -80,7 +80,7 @@ describe('Login:', () => {
 
       it('should refuse connection', done => {
         app.post('/login')
-          .set('Accept', 'text/html')
+          .set('Accept', 'text/plain')
           .set('Content-Type', 'application/json')
           .send(Entities.invalidAuthentication[0])
           .expect(401, done);
@@ -98,7 +98,7 @@ describe('Login:', () => {
 
       it('should inform', done => {
         app.post('/login')
-          .set('Accept', 'text/html')
+          .set('Accept', 'text/plain')
           .set('Content-Type', 'application/json')
           .send({ name: 'user' })
           .expect(422, done);
@@ -109,15 +109,15 @@ describe('Login:', () => {
       it('should inform', done => {
         app.post('/login')
           .set('Accept', 'application/json')
-          .set('Content-Type', 'text/html')
+          .set('Content-Type', 'text/plain')
           .send(Entities.validAuthentication[0])
           .expect(415, done);
       });
 
       it('should inform', done => {
         app.post('/login')
-          .set('Accept', 'text/html')
-          .set('Content-Type', 'text/html')
+          .set('Accept', 'text/plain')
+          .set('Content-Type', 'text/plain')
           .send(Entities.validAuthentication[0])
           .expect(415, done);
       });

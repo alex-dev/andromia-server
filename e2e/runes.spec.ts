@@ -24,7 +24,7 @@ describe('Runes:', () => {
 
     it('should return not acceptable', done => {
       app.get('/runes')
-        .set('Accept', 'text/html')
+        .set('Accept', 'text/plain')
         .expect(406, done);
     });
   });
@@ -40,7 +40,7 @@ describe('Runes:', () => {
 
     it('should return not acceptable', done => {
       app.get('/runes/weapons')
-        .set('Accept', 'text/html')
+        .set('Accept', 'text/plain')
         .expect(406, done);
     });
   });
@@ -56,7 +56,7 @@ describe('Runes:', () => {
 
     it('should return not acceptable', done => {
       app.get('/runes/abilities')
-        .set('Accept', 'text/html')
+        .set('Accept', 'text/plain')
         .expect(406, done);
     });
   });

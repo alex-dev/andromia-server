@@ -3,22 +3,19 @@ import * as request from 'supertest';
 
 export function authenticate(
   data: { name: string, password: string},
-  server: request.SuperTest<request.Test>, done?: Done): any {
-  let header: any;
+  server: request.SuperTest<request.Test>,
+  setter: (header: any) => void,
+  done: Done): any {
 
   server.post('/login').send(data)
     .expect(200)
+    .expect('X-Token', /.*/)
     .end((error, response) => {
-      if (error && done) {
+      if (error) {
         done(error);
       }
 
-      header = response.get('X-Token');
-      
-      if (done) {
-        done();
-      }
+      setter(response.get('X-Token'));
+      done();
     });
-
-  return header;
 }

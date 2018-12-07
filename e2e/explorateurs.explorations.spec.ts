@@ -23,8 +23,8 @@ describe("Explorateur's explorations:", () => {
 
   describe('GET /explorateurs/{name}/explorations', () => {
     describe('with authenticated user being target explorateur', () => {      
-      beforeEach(() => {
-        authorization = authenticate(target, app);
+      beforeEach(done => {
+        authenticate(target, app, res => authorization = res, done);
       });
 
       it('should return all explorations done by explorateur', done => {
@@ -40,14 +40,14 @@ describe("Explorateur's explorations:", () => {
       it('should return not acceptable', done => {
         app.get(`/explorateurs/${target.name}/explorations`)
           .set('Authorization', authorization)
-          .set('Accept', 'text/html')
+          .set('Accept', 'text/plain')
           .expect(406, done);
       });
     });
 
     describe('with authenticated user not being target explorateur', () => {
-      beforeEach(() => {
-        authorization = authenticate(other, app);
+      beforeEach(done => {
+        authenticate(other, app, res => authorization = res, done);
       });
 
       describe('with valid explorateur', () => {
@@ -64,7 +64,7 @@ describe("Explorateur's explorations:", () => {
         it('should return not acceptable', done => {
           app.get(`/explorateurs/${target.name}/explorations`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(406, done);
         });
       });
@@ -80,7 +80,7 @@ describe("Explorateur's explorations:", () => {
         it('should not find user', done => {
           app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(404, done);
         });
       });
@@ -96,7 +96,7 @@ describe("Explorateur's explorations:", () => {
 
         it('should refuse access', done => {
           app.get(`/explorateurs/${target.name}/explorations`)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(401, done);
         });
       });
@@ -110,7 +110,7 @@ describe("Explorateur's explorations:", () => {
 
         it('should refuse access', done => {
           app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(401, done);
         });
       });
@@ -119,8 +119,8 @@ describe("Explorateur's explorations:", () => {
 
   describe('POST /explorateurs/{name}/explorations', () => {
     describe('with authenticated user being target explorateur', () => {
-      beforeEach(() => {
-        authorization = authenticate(target, app);
+      beforeEach(done => {
+        authenticate(target, app, res => authorization = res, done);
       });
 
       describe('with valid exploration', () => {
@@ -223,7 +223,7 @@ describe("Explorateur's explorations:", () => {
         it('should return not acceptable', done => {
           app.post(`/explorateurs/${target.name}/explorations`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .set('Content-Type', 'application/json')
             .send({
               started: moment.utc(),
@@ -251,7 +251,7 @@ describe("Explorateur's explorations:", () => {
         it('should inform', done => {
           app.post(`/explorateurs/${target.name}/explorations`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .set('Content-Type', 'application/json')
             .send({ invalid: true })
             .expect(422, done);
@@ -263,7 +263,7 @@ describe("Explorateur's explorations:", () => {
           app.post(`/explorateurs/${target.name}/explorations`)
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
-            .set('Content-Type', 'text/html')
+            .set('Content-Type', 'text/plain')
             .send({
               started: moment.utc(),
               ended: moment.utc(),
@@ -279,8 +279,8 @@ describe("Explorateur's explorations:", () => {
         it('should inform', done => {
           app.post(`/explorateurs/${target.name}/explorations`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
-            .set('Content-Type', 'text/html')
+            .set('Accept', 'text/plain')
+            .set('Content-Type', 'text/plain')
             .send({
               started: moment.utc(),
               ended: moment.utc(),
@@ -296,8 +296,8 @@ describe("Explorateur's explorations:", () => {
     });
 
     describe('with authenticated user not being target explorateur', () => {
-      beforeEach(() => {
-        authorization = authenticate(other, app);
+      beforeEach(done => {
+        authenticate(other, app, res => authorization = res, done);
       });
 
       describe('with valid explorateur', () => {
@@ -313,7 +313,7 @@ describe("Explorateur's explorations:", () => {
           it('should return forbidden', done => {
             app.post(`/explorateurs/${target.name}/explorations`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .set('Content-Type', 'application/json')
               .send({})
               .expect(403, done);
@@ -331,7 +331,7 @@ describe("Explorateur's explorations:", () => {
   
           it('should return forbidden', done => {
             app.post(`/explorateurs/${target.name}/explorations`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .set('Content-Type', 'application/json')
               .send({ invalid: true })
               .expect(403, done);
@@ -342,15 +342,15 @@ describe("Explorateur's explorations:", () => {
           it('should return forbidden', done => {
             app.post(`/explorateurs/${target.name}/explorations`)
               .set('Accept', 'application/json')
-              .set('Content-Type', 'text/html')
+              .set('Content-Type', 'text/plain')
               .send({})
               .expect(403, done);
           });
     
           it('should return forbidden', done => {
             app.post(`/explorateurs/${target.name}/explorations`)
-              .set('Accept', 'text/html')
-              .set('Content-Type', 'text/html')
+              .set('Accept', 'text/plain')
+              .set('Content-Type', 'text/plain')
               .send({})
               .expect(403, done);
           });
@@ -378,7 +378,7 @@ describe("Explorateur's explorations:", () => {
           it('should return forbidden', done => {
             app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .set('Content-Type', 'application/json')
               .send({
                 started: moment.utc(),
@@ -406,7 +406,7 @@ describe("Explorateur's explorations:", () => {
           it('should return forbidden', done => {
             app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .set('Content-Type', 'application/json')
               .send({ invalid: true })
               .expect(403, done);
@@ -418,7 +418,7 @@ describe("Explorateur's explorations:", () => {
             app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
               .set('Authorization', authorization)
               .set('Accept', 'application/json')
-              .set('Content-Type', 'text/html')
+              .set('Content-Type', 'text/plain')
               .send({
                 started: moment.utc(),
                 ended: moment.utc(),
@@ -434,8 +434,8 @@ describe("Explorateur's explorations:", () => {
           it('should return forbidden', done => {
             app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
-              .set('Content-Type', 'text/html')
+              .set('Accept', 'text/plain')
+              .set('Content-Type', 'text/plain')
               .send({
                 started: moment.utc(),
                 ended: moment.utc(),
@@ -471,7 +471,7 @@ describe("Explorateur's explorations:", () => {
   
           it('should refuse access', done => {
             app.post(`/explorateurs/${target.name}/explorations`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .set('Content-Type', 'application/json')
               .send({
                 started: moment.utc(),
@@ -497,7 +497,7 @@ describe("Explorateur's explorations:", () => {
   
           it('should refuse access', done => {
             app.post(`/explorateurs/${target.name}/explorations`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .set('Content-Type', 'application/json')
               .send({ invalid: true })
               .expect(401, done);
@@ -508,7 +508,7 @@ describe("Explorateur's explorations:", () => {
           it('should refuse access', done => {
             app.post(`/explorateurs/${target.name}/explorations`)
               .set('Accept', 'application/json')
-              .set('Content-Type', 'text/html')
+              .set('Content-Type', 'text/plain')
               .send({
                 started: moment.utc(),
                 ended: moment.utc(),
@@ -523,8 +523,8 @@ describe("Explorateur's explorations:", () => {
     
           it('should refuse access', done => {
             app.post(`/explorateurs/${target.name}/explorations`)
-              .set('Accept', 'text/html')
-              .set('Content-Type', 'text/html')
+              .set('Accept', 'text/plain')
+              .set('Content-Type', 'text/plain')
               .send({
                 started: moment.utc(),
                 ended: moment.utc(),
@@ -558,7 +558,7 @@ describe("Explorateur's explorations:", () => {
   
           it('should refuse access', done => {
             app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .set('Content-Type', 'application/json')
               .send({
                 started: moment.utc(),
@@ -584,7 +584,7 @@ describe("Explorateur's explorations:", () => {
   
           it('should refuse access', done => {
             app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .set('Content-Type', 'application/json')
               .send({ invalid: true })
               .expect(401, done);
@@ -595,7 +595,7 @@ describe("Explorateur's explorations:", () => {
           it('should refuse access', done => {
             app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
               .set('Accept', 'application/json')
-              .set('Content-Type', 'text/html')
+              .set('Content-Type', 'text/plain')
               .send({
                 started: moment.utc(),
                 ended: moment.utc(),
@@ -610,8 +610,8 @@ describe("Explorateur's explorations:", () => {
     
           it('should refuse access', done => {
             app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
-              .set('Accept', 'text/html')
-              .set('Content-Type', 'text/html')
+              .set('Accept', 'text/plain')
+              .set('Content-Type', 'text/plain')
               .send({
                 started: moment.utc(),
                 ended: moment.utc(),
@@ -630,8 +630,8 @@ describe("Explorateur's explorations:", () => {
 
   describe('GET /explorateurs/{name}/explorations/{uuid}', () => {
     describe('with authenticated user being target explorateur', () => {
-      beforeEach(() => {
-        authorization = authenticate(target, app);
+      beforeEach(done => {
+        authenticate(target, app, res => authorization = res, done);
       });
 
       describe('with valid exploration', () => {
@@ -647,7 +647,7 @@ describe("Explorateur's explorations:", () => {
         it('should return not acceptable', done => {
           app.get(`/explorateurs/${target.name}/explorations/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(406, done);
         });
       });
@@ -663,7 +663,7 @@ describe("Explorateur's explorations:", () => {
         it('should not find exploration', done => {
           app.get(`/explorateurs/${target.name}/explorations/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(404, done);
         });
       });
@@ -679,15 +679,15 @@ describe("Explorateur's explorations:", () => {
         it('should not find exploration', done => {
           app.get(`/explorateurs/${target.name}/explorations/${Entities.invalidUnitKey}`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(404, done);
         });
       });
     });
 
     describe('with authenticated user not being target explorateur', () => {
-      beforeEach(() => {
-        authorization = authenticate(Entities.validAuthentication[1], app);
+      beforeEach(done => {
+        authenticate(other, app, res => authorization = res, done);
       });
 
       describe('with valid explorateur', () => {
@@ -704,7 +704,7 @@ describe("Explorateur's explorations:", () => {
           it('should return not acceptable', done => {
             app.get(`/explorateurs/${target.name}/explorations/${Entities.validUnitKeys.get(target.name)}`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(406, done);
           });
         });
@@ -729,14 +729,14 @@ describe("Explorateur's explorations:", () => {
           it('should not find exploration', done => {
             app.get(`/explorateurs/${target.name}/explorations/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(404, done);
           });
     
           it('should not find exploration', done => {
             app.get(`/explorateurs/${target.name}/explorations/${Entities.invalidUnitKey}`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(404, done);
           });
         });
@@ -754,7 +754,7 @@ describe("Explorateur's explorations:", () => {
           it('should not find user', done => {
             app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(404, done);
           });
         });
@@ -770,7 +770,7 @@ describe("Explorateur's explorations:", () => {
           it('should not find user', done => {
             app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations/${Entities.invalidUnitKey}`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(404, done);
           });
         });
@@ -788,7 +788,7 @@ describe("Explorateur's explorations:", () => {
 
           it('should refuse access', done => {
             app.get(`/explorateurs/${target.name}/explorations/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(401, done);
           });
         });
@@ -802,7 +802,7 @@ describe("Explorateur's explorations:", () => {
 
           it('should refuse access', done => {
             app.get(`/explorateurs/${target.name}/explorations/${(Entities.validUnitKeys.get(other.name) || [''])[0]}`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(401, done);
           });
         });
@@ -816,7 +816,7 @@ describe("Explorateur's explorations:", () => {
 
           it('should refuse access', done => {
             app.get(`/explorateurs/${target.name}/explorations/${Entities.invalidUnitKey}`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(401, done);
           });
         });
@@ -832,7 +832,7 @@ describe("Explorateur's explorations:", () => {
 
           it('should refuse access', done => {
             app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations/${(Entities.validUnitKeys.get(target.name) || [''])[0]}`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(401, done);
           });
         });
@@ -846,7 +846,7 @@ describe("Explorateur's explorations:", () => {
 
           it('should refuse access', done => {
             app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations/${Entities.invalidUnitKey}`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .expect(401, done);
           });
         });
