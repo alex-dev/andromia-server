@@ -18,8 +18,8 @@ describe('Explorations creation details:', () => {
   beforeEach(inject([ExpressApplication], (express: ExpressApplication) => {
     app = request(express);
   }));
-  beforeEach(() => {
-    authorization = authenticate(target, app);
+  beforeEach(done => {
+    authenticate(target, app, res => authorization = res, done);
   });
 
   describe('with no unit found during exploration', () => {

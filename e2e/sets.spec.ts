@@ -24,7 +24,7 @@ describe('Sets:', () => {
 
     it('should return not acceptable', done => {
       app.get('/sets')
-        .set('Accept', 'text/html')
+        .set('Accept', 'text/plain')
         .expect(406, done);
     });
   });

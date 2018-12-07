@@ -21,8 +21,8 @@ describe("Explorateur:", () => {
   }));
 
   describe('GET /explorateurs', () => {
-    beforeEach(() => {
-      authorization = authenticate(target, app);
+    beforeEach(done => {
+      authenticate(target, app, res => authorization = res, done);
     });
     
     it('should return all known explorateurs', done => {
@@ -36,14 +36,14 @@ describe("Explorateur:", () => {
 
     it('should return not acceptable', done => {
       app.get('/explorateurs')
-        .set('Accept', 'text/html')
+        .set('Accept', 'text/plain')
         .expect(406, done);
     });
   });
 
   describe('POST /explorateurs', () => {
-    beforeEach(() => {
-      authorization = authenticate(target, app);
+    beforeEach(done => {
+      authenticate(target, app, res => authorization = res, done);
     });
 
     describe('with valid explorateur', () => {
@@ -51,7 +51,12 @@ describe("Explorateur:", () => {
         app.post(`/explorateurs`)
           .set('Authorization', authorization)
           .set('Accept', 'application/json')
-          .send({})
+          .send({
+            email: 'ycharron@cstj.qc.ca',
+            name: 'Yannick Charon',
+            password: 'password123',
+            location: 'Inoxis'
+          })
           .expect(201)
           .expect('Explorateur', /.*/)
           .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), false, false), done)
@@ -61,7 +66,12 @@ describe("Explorateur:", () => {
         app.post(`/explorateurs?expand=units`)
           .set('Authorization', authorization)
           .set('Accept', 'application/json')
-          .send({})
+          .send({
+            email: 'ycharron@cstj.qc.ca',
+            name: 'Yannick Charon',
+            password: 'password123',
+            location: 'Inoxis'
+          })
           .expect(201)
           .expect('Explorateur', /.*/)
           .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), true, false), done)
@@ -77,7 +87,12 @@ describe("Explorateur:", () => {
         app.post(`/explorateurs?expand=explorations`)
           .set('Authorization', authorization)
           .set('Accept', 'application/json')
-          .send({})
+          .send({
+            email: 'ycharron@cstj.qc.ca',
+            name: 'Yannick Charon',
+            password: 'password123',
+            location: 'Inoxis'
+          })
           .expect(201)
           .expect('Explorateur', /.*/)
           .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), false, true), done)
@@ -93,7 +108,12 @@ describe("Explorateur:", () => {
         app.post(`/explorateurs?expand=units,explorations`)
           .set('Authorization', authorization)
           .set('Accept', 'application/json')
-          .send({})
+          .send({
+            email: 'ycharron@cstj.qc.ca',
+            name: 'Yannick Charon',
+            password: 'password123',
+            location: 'Inoxis'
+          })
           .expect(201)
           .expect('Explorateur', /.*/)
           .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), false, true), done)
@@ -114,9 +134,14 @@ describe("Explorateur:", () => {
       it('should return not acceptable', done => {
         app.post(`/explorateurs`)
           .set('Authorization', authorization)
-          .set('Accept', 'text/html')
+          .set('Accept', 'text/plain')
           .set('Content-Type', 'application/json')
-          .send({})
+          .send({
+            email: 'ycharron@cstj.qc.ca',
+            name: 'Yannick Charon',
+            password: 'password123',
+            location: 'Inoxis'
+          })
           .expect(406, done);
       });
     });
@@ -134,19 +159,19 @@ describe("Explorateur:", () => {
       it('should inform', done => {
         app.post(`/explorateurs`)
           .set('Authorization', authorization)
-          .set('Accept', 'text/html')
+          .set('Accept', 'text/plain')
           .set('Content-Type', 'application/json')
           .send({ invalid: true })
           .expect(422, done);
       });
     });
 
-    describe('with unprocessable body', () => {
+    describe('with invalid content type', () => {
       it('should inform', done => {
         app.post(`/explorateurs`)
           .set('Authorization', authorization)
           .set('Accept', 'application/json')
-          .set('Content-Type', 'application/json')
+          .set('Content-Type', 'text/plain')
           .send({ invalid: true })
           .expect(415, done);
       });
@@ -154,8 +179,8 @@ describe("Explorateur:", () => {
       it('should inform', done => {
         app.post(`/explorateurs`)
           .set('Authorization', authorization)
-          .set('Accept', 'text/html')
-          .set('Content-Type', 'application/json')
+          .set('Accept', 'text/plain')
+          .set('Content-Type', 'text/plain')
           .send({ invalid: true })
           .expect(415, done);
       });
@@ -174,7 +199,7 @@ describe("Explorateur:", () => {
 
       it('should return not acceptable', done => {
         app.get(`/explorateurs/${Entities.validAuthentication[0]}`)
-          .set('Accept', 'text/html')
+          .set('Accept', 'text/plain')
           .expect(406, done);
       });
     });
@@ -188,7 +213,7 @@ describe("Explorateur:", () => {
 
       it('should not find explorateur', done => {
         app.get(`/explorateurs/${Entities.invalidAuthentication}`)
-          .set('Accept', 'text/html')
+          .set('Accept', 'text/plain')
           .expect(404, done);
       });
     });
@@ -198,8 +223,8 @@ describe("Explorateur:", () => {
     let authorization: any;
 
     describe('with authenticated user being target explorateur', () => {
-      beforeEach(() => {
-        authorization = authenticate(target, app);
+      beforeEach(done => {
+        authenticate(target, app, res => authorization = res, done);
       });
 
       describe('with valid exploration', () => {
@@ -207,7 +232,12 @@ describe("Explorateur:", () => {
           app.put(`/explorateurs/${target.name}`)
           .set('Authorization', authorization)
             .set('Accept', 'application/json')
-            .send({})
+            .send({
+              email: 'ycharron@cstj.qc.ca',
+              name: 'Yannick Charon',
+              password: 'password123',
+              location: 'Inoxis'
+            })
             .expect(200)
             .expect('Explorateur', /.*/)
             .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), false, false), done);
@@ -217,7 +247,12 @@ describe("Explorateur:", () => {
           app.put(`/explorateurs/${target.name}?expand=units`)
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
-            .send({})
+            .send({
+              email: 'ycharron@cstj.qc.ca',
+              name: 'Yannick Charon',
+              password: 'password123',
+              location: 'Inoxis'
+            })
             .expect(200)
             .expect('Explorateur', /.*/)
             .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), true, false), done);
@@ -227,7 +262,12 @@ describe("Explorateur:", () => {
           app.put(`/explorateurs/${target.name}?expand=explorations`)
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
-            .send({})
+            .send({
+              email: 'ycharron@cstj.qc.ca',
+              name: 'Yannick Charon',
+              password: 'password123',
+              location: 'Inoxis'
+            })
             .expect(200)
             .expect('Explorateur', /.*/)
             .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), false, true), done);
@@ -237,7 +277,12 @@ describe("Explorateur:", () => {
           app.put(`/explorateurs/${target.name}?expand=units,explorations`)
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
-            .send({})
+            .send({
+              email: 'ycharron@cstj.qc.ca',
+              name: 'Yannick Charon',
+              password: 'password123',
+              location: 'Inoxis'
+            })
             .expect(200)
             .expect('Explorateur', /.*/)
             .expect((response: request.Response) => validateExplorateur(JSON.parse(response.text), true, true), done);
@@ -246,9 +291,14 @@ describe("Explorateur:", () => {
         it('should return not acceptable', done => {
           app.put(`/explorateurs/${target.name}`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .set('Content-Type', 'application/json')
-            .send({})
+            .send({
+              email: 'ycharron@cstj.qc.ca',
+              name: 'Yannick Charon',
+              password: 'password123',
+              location: 'Inoxis'
+            })
             .expect(406, done);
         });
       });
@@ -266,7 +316,7 @@ describe("Explorateur:", () => {
         it('should inform', done => {
           app.put(`/explorateurs/${target.name}`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .set('Content-Type', 'application/json')
             .send({ invalid: true })
             .expect(422, done);
@@ -278,7 +328,7 @@ describe("Explorateur:", () => {
           app.post(`/explorateurs/${target.name}`)
             .set('Authorization', authorization)
             .set('Accept', 'application/json')
-            .set('Content-Type', 'text/html')
+            .set('Content-Type', 'text/plain')
             .send({})
             .expect(415, done);
         });
@@ -286,49 +336,45 @@ describe("Explorateur:", () => {
         it('should inform', done => {
           app.post(`/explorateurs/${target.name}`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
-            .set('Content-Type', 'text/html')
+            .set('Accept', 'text/plain')
+            .set('Content-Type', 'text/plain')
             .send({})
             .expect(415, done);
-        });
-      });
-
-      describe('with an invalid explorateur', () => {
-        it('should not find explorateur', done => {
-          app.put(`/explorateurs/${target.name}`)
-            .set('Accept', 'application/json')
-            .expect(404, done);
-        });
-  
-        it('should not find explorateur', done => {
-          app.put(`/explorateurs/${target.name}`)
-            .set('Accept', 'text/html')
-            .expect(404, done);
         });
       });
     });
 
     describe('with authenticated user not being target explorateur', () => {
-      beforeEach(() => {
-        authorization = authenticate(other, app);
+      beforeEach(done => {
+        authenticate(other, app, res => authorization = res, done);
       });
 
       describe('with valid explorateur', () => {
-        describe('with valid exploration', () => {
+        describe('with valid explorateur', () => {
           it('should return forbidden', done => {
             app.post(`/explorateurs/${target.name}`)
               .set('Authorization', authorization)
               .set('Accept', 'application/json')
-              .send({})
+              .send({
+                email: 'ycharron@cstj.qc.ca',
+                name: 'Yannick Charon',
+                password: 'password123',
+                location: 'Inoxis'
+              })
               .expect(403, done);
           });
   
           it('should return forbidden', done => {
             app.post(`/explorateurs/${target.name}`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .set('Content-Type', 'application/json')
-              .send({})
+              .send({
+                email: 'ycharron@cstj.qc.ca',
+                name: 'Yannick Charon',
+                password: 'password123',
+                location: 'Inoxis'
+              })
               .expect(403, done);
           });
         });
@@ -344,7 +390,7 @@ describe("Explorateur:", () => {
   
           it('should return forbidden', done => {
             app.post(`/explorateurs/${target.name}`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .set('Content-Type', 'application/json')
               .send({ invalid: true })
               .expect(422, done);
@@ -355,15 +401,15 @@ describe("Explorateur:", () => {
           it('should return forbidden', done => {
             app.post(`/explorateurs/${target.name}`)
               .set('Accept', 'application/json')
-              .set('Content-Type', 'text/html')
+              .set('Content-Type', 'text/plain')
               .send({})
               .expect(415, done);
           });
     
           it('should return forbidden', done => {
             app.post(`/explorateurs/${target.name}`)
-              .set('Accept', 'text/html')
-              .set('Content-Type', 'text/html')
+              .set('Accept', 'text/plain')
+              .set('Content-Type', 'text/plain')
               .send({})
               .expect(415, done);
           });
@@ -371,28 +417,38 @@ describe("Explorateur:", () => {
       });
 
       describe('with invalid explorateur', () => {
-        describe('with valid exploration', () => {
+        describe('with valid explorateur', () => {
           it('should return forbidden', done => {
-            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}`)
               .set('Authorization', authorization)
               .set('Accept', 'application/json')
-              .send({})
+              .send({
+                email: 'ycharron@cstj.qc.ca',
+                name: 'Yannick Charon',
+                password: 'password123',
+                location: 'Inoxis'
+              })
               .expect(403, done);
           });
   
           it('should return forbidden', done => {
-            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .set('Content-Type', 'application/json')
-              .send({})
+              .send({
+                email: 'ycharron@cstj.qc.ca',
+                name: 'Yannick Charon',
+                password: 'password123',
+                location: 'Inoxis'
+              })
               .expect(403, done);
           });
         });
   
         describe('with unprocessable body', () => {
           it('should return forbidden', done => {
-            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}`)
               .set('Authorization', authorization)
               .set('Accept', 'application/json')
               .set('Content-Type', 'application/json')
@@ -401,9 +457,9 @@ describe("Explorateur:", () => {
           });
   
           it('should return forbidden', done => {
-            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .set('Content-Type', 'application/json')
               .send({ invalid: true })
               .expect(403, done);
@@ -412,20 +468,30 @@ describe("Explorateur:", () => {
   
         describe('with invalid content type', () => {
           it('should return forbidden', done => {
-            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}`)
               .set('Authorization', authorization)
               .set('Accept', 'application/json')
-              .set('Content-Type', 'text/html')
-              .send({})
+              .set('Content-Type', 'text/plain')
+              .send({
+                email: 'ycharron@cstj.qc.ca',
+                name: 'Yannick Charon',
+                password: 'password123',
+                location: 'Inoxis'
+              })
               .expect(403, done);
           });
     
           it('should return forbidden', done => {
-            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}/explorations`)
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}`)
               .set('Authorization', authorization)
-              .set('Accept', 'text/html')
-              .set('Content-Type', 'text/html')
-              .send({})
+              .set('Accept', 'text/plain')
+              .set('Content-Type', 'text/plain')
+              .send({
+                email: 'ycharron@cstj.qc.ca',
+                name: 'Yannick Charon',
+                password: 'password123',
+                location: 'Inoxis'
+              })
               .expect(403, done);
           });
         });
@@ -434,19 +500,31 @@ describe("Explorateur:", () => {
 
     describe('with anonymous user', () => {
       describe('with valid explorateur', () => {
-        it('should refuse access', done => {
-          app.post(`/explorateurs/${target.name}`)
-            .set('Accept', 'application/json')
-            .send({})
-            .expect(401, done);
-        });
-  
-        it('should refuse access', done => {
-          app.post(`/explorateurs/${target.name}`)
-            .set('Accept', 'text/html')
-            .set('Content-Type', 'application/json')
-            .send({})
-            .expect(401, done);
+        describe('with valid explorateur', () => {
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${target.name}`)
+              .set('Accept', 'application/json')
+              .send({
+                email: 'ycharron@cstj.qc.ca',
+                name: 'Yannick Charon',
+                password: 'password123',
+                location: 'Inoxis'
+              })
+              .expect(401, done);
+          });
+    
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${target.name}`)
+              .set('Accept', 'text/plain')
+              .set('Content-Type', 'application/json')
+              .send({
+                email: 'ycharron@cstj.qc.ca',
+                name: 'Yannick Charon',
+                password: 'password123',
+                location: 'Inoxis'
+              })
+              .expect(401, done);
+          });  
         });
   
         describe('with unprocessable body', () => {
@@ -460,7 +538,7 @@ describe("Explorateur:", () => {
   
           it('should refuse access', done => {
             app.post(`/explorateurs/${target.name}`)
-              .set('Accept', 'text/html')
+              .set('Accept', 'text/plain')
               .set('Content-Type', 'application/json')
               .send({ invalid: true })
               .expect(401, done);
@@ -471,69 +549,101 @@ describe("Explorateur:", () => {
           it('should refuse access', done => {
             app.post(`/explorateurs/${target.name}`)
               .set('Accept', 'application/json')
-              .set('Content-Type', 'text/html')
-              .send({})
+              .set('Content-Type', 'text/plain')
+              .send({
+                email: 'ycharron@cstj.qc.ca',
+                name: 'Yannick Charon',
+                password: 'password123',
+                location: 'Inoxis'
+              })
               .expect(401, done);
           });
     
           it('should refuse access', done => {
             app.post(`/explorateurs/${target.name}`)
-              .set('Accept', 'text/html')
-              .set('Content-Type', 'text/html')
-              .send({})
+              .set('Accept', 'text/plain')
+              .set('Content-Type', 'text/plain')
+              .send({
+                email: 'ycharron@cstj.qc.ca',
+                name: 'Yannick Charon',
+                password: 'password123',
+                location: 'Inoxis'
+              })
               .expect(401, done);
           });
         });
       });
 
       describe('with invalid explorateur', () => {
-        it('should refuse access', done => {
-          app.post(`/explorateurs/${target.name}`)
-            .set('Accept', 'application/json')
-            .send({})
-            .expect(401, done);
-        });
-  
-        it('should refuse access', done => {
-          app.post(`/explorateurs/${target.name}`)
-            .set('Accept', 'text/html')
-            .set('Content-Type', 'application/json')
-            .send({})
-            .expect(401, done);
+        describe('with valid explorateur', () => {
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}`)
+              .set('Accept', 'application/json')
+              .send({
+                email: 'ycharron@cstj.qc.ca',
+                name: 'Yannick Charon',
+                password: 'password123',
+                location: 'Inoxis'
+              })
+              .expect(401, done);
+          });
+    
+          it('should refuse access', done => {
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}`)
+              .set('Accept', 'text/plain')
+              .set('Content-Type', 'application/json')
+              .send({
+                email: 'ycharron@cstj.qc.ca',
+                name: 'Yannick Charon',
+                password: 'password123',
+                location: 'Inoxis'
+              })
+              .expect(401, done);
+          });  
         });
   
         describe('with unprocessable body', () => {
           it('should refuse access', done => {
-            app.post(`/explorateurs/${target.name}`)
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}`)
               .set('Accept', 'application/json')
               .set('Content-Type', 'application/json')
-              .send({ invalid: true })
+              .send({ invalid: true})
               .expect(401, done);
           });
   
           it('should refuse access', done => {
-            app.post(`/explorateurs/${target.name}`)
-              .set('Accept', 'text/html')
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}`)
+              .set('Accept', 'text/plain')
               .set('Content-Type', 'application/json')
-              .send({ invalid: true })
+              .send({ invalid: true})
               .expect(401, done);
           });
         });
   
         describe('with invalid content type', () => {
           it('should refuse access', done => {
-            app.post(`/explorateurs/$${target.name}`)
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}`)
               .set('Accept', 'application/json')
-              .set('Content-Type', 'text/html')
-              .send({})
+              .set('Content-Type', 'text/plain')
+              .send({
+                email: 'ycharron@cstj.qc.ca',
+                name: 'Yannick Charon',
+                password: 'password123',
+                location: 'Inoxis'
+              })
               .expect(401, done);
           });
     
           it('should refuse access', done => {
-            app.post(`/explorateurs/${target.name}`)
-              .set('Accept', 'text/html')
-              .set('Content-Type', 'text/html')
-              .send({})
+            app.post(`/explorateurs/${Entities.invalidAuthentication[0].name}`)
+              .set('Accept', 'text/plain')
+              .set('Content-Type', 'text/plain')
+              .send({
+                email: 'ycharron@cstj.qc.ca',
+                name: 'Yannick Charon',
+                password: 'password123',
+                location: 'Inoxis'
+              })
               .expect(401, done);
           });
         });

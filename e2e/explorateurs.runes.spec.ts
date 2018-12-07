@@ -21,8 +21,8 @@ describe("Explorateur's runes", () => {
 
   describe('GET /explorateurs/{name}/runes', () => {
     describe('with authenticated user being target explorateur', () => {      
-      beforeEach(() => {
-        authorization = authenticate(target, app);
+      beforeEach(done => {
+        authenticate(target, app, res => authorization = res, done);
       });
 
       it('should return runes', done => {
@@ -37,14 +37,14 @@ describe("Explorateur's runes", () => {
       it('should return not acceptable', done => {
         app.get(`/explorateurs/${target.name}/runes`)
           .set('Authorization', authorization)
-          .set('Accept', 'text/html')
+          .set('Accept', 'text/plain')
           .expect(406, done);
       });
     });
 
     describe('with authenticated user not being target explorateur', () => {
-      beforeEach(() => {
-        authorization = authenticate(other, app);
+      beforeEach(done => {
+        authenticate(other, app, res => authorization = res, done);
       });
 
       describe('with valid explorateur', () => {
@@ -60,7 +60,7 @@ describe("Explorateur's runes", () => {
         it('should return not acceptable', done => {
           app.get(`/explorateurs/${target.name}/runes`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(406, done);
         });
       });
@@ -76,7 +76,7 @@ describe("Explorateur's runes", () => {
         it('should not find user', done => {
           app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/runes`)
             .set('Authorization', authorization)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(404, done);
         });
       });
@@ -92,7 +92,7 @@ describe("Explorateur's runes", () => {
         
         it('should refuse access', done => {
           app.get(`/explorateurs/${target.name}/runes`)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(401, done);
         });
       });
@@ -106,7 +106,7 @@ describe("Explorateur's runes", () => {
 
         it('should refuse access', done => {
           app.get(`/explorateurs/${Entities.invalidAuthentication[0].name}/runes`)
-            .set('Accept', 'text/html')
+            .set('Accept', 'text/plain')
             .expect(401, done);
         });
       });

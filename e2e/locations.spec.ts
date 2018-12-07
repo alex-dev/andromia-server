@@ -24,7 +24,7 @@ describe('Locations:', () => {
 
     it('should return not acceptable', done => {
       app.get('/locations')
-        .set('Accept', 'text/html')
+        .set('Accept', 'text/plain')
         .expect(406, done);
     });
   });
