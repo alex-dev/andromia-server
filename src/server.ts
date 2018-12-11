@@ -2,12 +2,18 @@ import { ServerLoader, ServerSettings, GlobalAcceptMimesMiddleware } from '@tsed
 import * as parser from 'body-parser';
 import * as compress from 'compression';
 import * as override from 'method-override';
+const root = require('path').resolve(__dirname);
 
 @ServerSettings({
   acceptMimes: ['application/json'],
   mount: {
 
   },
+  componentsScan: [
+    `${ root }/converters/**/*.converter.js`,
+    `${ root }/linkers/**/*.linker.js`,
+    `${ root }/services/**/**.js`
+  ],
   debug: process.env.NODE_ENV != 'prod'
 })
 export class Server extends ServerLoader {

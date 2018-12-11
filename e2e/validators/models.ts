@@ -30,6 +30,7 @@ export function validateUnits(data: any) {
 }
 
 export function validateUnit(data: any) {
+  expect(data).to.haveOwnProperty('href').that.is.a('string');
   expect(data).to.haveOwnProperty('number').that.is.a('number');
   expect(data).to.haveOwnProperty('name').that.is.a('string');
   expect(data).to.haveOwnProperty('set').that.is.a('string');
@@ -56,6 +57,8 @@ export function validateOwnedUnits(data: any) {
 }
 
 export function validateOwnedUnit(data: any) {
+  console.log(data);
+  expect(data).to.haveOwnProperty('href').that.is.a('string');
   validateUnit(data);
   validateRuneDictionnary(data, 'kernel');
   expect(data).to.haveOwnProperty('uuid').that.is.a('string');
@@ -69,6 +72,7 @@ export function validateExplorations(data: any) {
 }
 
 export function validateExploration(data: any) {
+  expect(data).to.haveOwnProperty('href').that.is.a('string');
   validateDate(data, 'started');
   validateDate(data, 'ended');
   validateRuneDictionnary(data, 'runes');
@@ -88,6 +92,7 @@ export function validateExplorateurs(data: any) {
 }
 
 export function validateExplorateur(data: any, expandUnits = false, expandExplorations = false) {
+  expect(data).to.haveOwnProperty('href').that.is.a('string');
   expect(data).to.haveOwnProperty('email').that.is.a('string');
   expect(data).to.haveOwnProperty('name').that.is.a('string');
   expect(data).to.not.haveOwnProperty('password');
