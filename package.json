@@ -6,10 +6,10 @@
   "main": "build/app.js",
   "scripts": {
     "build": "npm run transpile:prod",
-    "mocha:e2e": "mocha --reporter spec --check-leaks --bail build-test/e2e/**/*.spec.js",
-    "mocha:e2e:no-auth": "mocha --reporter spec --checkleaks --bail --exclude build-test/e2e/explorateur*.spec.js build-test/e2e/**/*.spec.js",
-    "mocha:unit": "mocha --reporter spec --checkleaks --bail build-test/tests/**/*.spec.js",
-    "start:dev": "nodemon --watch './src/**/*.ts' --ignore './node_modules/**/*' --exec ts-node ./src/app.ts",
+    "mocha:e2e": "mocha --require dotenv/config --reporter spec --check-leaks build-test/e2e/**/*.spec.js",
+    "mocha:e2e:no-auth": "mocha --require dotenv/config --reporter spec --checkleaks --exclude build-test/e2e/explorateur*.spec.js build-test/e2e/**/*.spec.js",
+    "mocha:unit": "mocha --bail --require dotenv/config --reporter spec --checkleaks build-test/tests/**/*.spec.js",
+    "start:dev": "nodemon --watch './src/**/*.ts' --ignore './node_modules/**/*' --exec \"ts-node --require dotenv/config\" ./src/app.ts",
     "start": "npm run transpile:prod && node ./build/app.js",
     "test": "npm run transpile:test && npm run mocha:unit && npm run mocha:e2e",
     "test:e2e": "npm run transpile:test && npm run mocha:e2e",
@@ -49,7 +49,7 @@
     "@types/mocha": "^5.2.5",
     "@types/supertest": "^2.0.6",
     "chai": "^4.2.0",
-    "dot-env": "^0.0.1",
+    "dotenv": "^6.2.0",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.6",
     "supertest": "^3.3.0"

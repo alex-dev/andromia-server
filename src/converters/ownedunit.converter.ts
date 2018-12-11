@@ -5,6 +5,10 @@ import { BaseConverter } from './base.converter';
 
 @Converter(OwnedUnit)
 export class OwnedUnitConverter extends BaseConverter implements IConverter {
+  public constructor() {
+    super();
+    console.log('constructing')
+  }
   public deserialize(data: any, target: any, base: any, deserializer: IDeserializer): OwnedUnit|undefined {
     const getUnit = () => {
       const subdata = Object.assign({}, data);
