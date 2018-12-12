@@ -2,6 +2,7 @@ import { Service } from '@tsed/common';
 import { LinkerInterface } from './linker.interface';
 import { Explorateur } from '../models/explorateur';
 import { OwnedUnit } from '../models/ownedunit';
+import { Unit } from '../models/unit';
 
 @Service()
 export class OwnedUnitLinker implements LinkerInterface<OwnedUnit> {
@@ -12,7 +13,7 @@ export class OwnedUnitLinker implements LinkerInterface<OwnedUnit> {
 
   private url(unit: OwnedUnit) {
     const explorateur = unit.explorateur instanceof Explorateur
-      ? unit.explorateur._id
+      ? unit.explorateur.name
       : unit.explorateur as string;
 
     return {
@@ -21,9 +22,11 @@ export class OwnedUnitLinker implements LinkerInterface<OwnedUnit> {
     }
   }
 
-  public link(unit: OwnedUnit): { href: string } {
+  public link(unit: OwnedUnit): { href: string, unit: string } {
+    const url = this.url(unit);
     return {
-      href: `${ this.url(unit).current }/${ unit._id }`
+      href: `${ url.current }/${ unit.uuid }`,
+      unit: `${ url.server }/units/${ unit.unit instanceof Unit ? unit.unit.name : unit.unit as string }`
     }
   }
 }

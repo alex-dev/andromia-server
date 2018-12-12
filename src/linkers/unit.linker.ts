@@ -11,7 +11,7 @@ export class UnitLinker implements LinkerInterface<Unit> {
 
   public link(unit: Unit): { href: string } {
     return {
-      href: `${ this.url.current }/${ unit._id }`
+      href: `${ this.url.current }/${ unit.name }`
     }
   }
 }

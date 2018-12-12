@@ -1,6 +1,7 @@
 import { IgnoreProperty, Required, Minimum } from '@tsed/common';
-import { Indexed, Model, Unique } from '@tsed/mongoose';
-import { Ability, Set, Weapon } from './types';
+import { Indexed, Model, Unique, Ref } from '@tsed/mongoose';
+import { Ability, Set } from './types';
+import { RunesHolder } from './runesholder';
 
 @Model()
 export class Unit {
@@ -12,10 +13,9 @@ export class Unit {
   @Minimum(0) @Required() public speed: number;
   @Required() public imageURL: string;
   @Indexed() @Required() public affinity: Ability;
-  @Required() public abilities: Ability[];
-  @Required() public weapons: Weapon[];
+  @Required() @Ref('RunesHolder') public runes: RunesHolder;
 
-  public constructor(number: number, name: string, set: Set, life: number, speed: number, imageURL: string, affinity: Ability, abilities: Ability[], weapons: Weapon[]) {
+  public constructor(number: number, name: string, set: Set, life: number, speed: number, imageURL: string, affinity: Ability, runes: RunesHolder) {
     this.number = number;
     this.name = name;
     this.set = set;
@@ -23,7 +23,6 @@ export class Unit {
     this.speed = speed;
     this.imageURL = imageURL;
     this.affinity = affinity;
-    this.abilities = abilities;
-    this.weapons = weapons;
+    this.runes = runes;
   }
 }

@@ -5,7 +5,7 @@ import { ConverterDeserializationError } from '@tsed/common/lib/converters/error
 import { CONVERTER } from '@tsed/common/lib/converters/constants/index';
 import { BadRequest, InternalServerError } from 'ts-httpexceptions';
 import { LinkerProvider } from './linker.provider';
-import { BaseConverter } from '../converters/base.converter';
+import { BaseConverter } from '../converters/baseconverter';
 
 @OverrideService(Converter)
 export class ConverterService extends BaseConverter {

@@ -1,13 +1,12 @@
 import { IConverter, Converter, IDeserializer, ISerializer, PropertyMetadata, PropertyRegistry } from '@tsed/common';
 import { OwnedUnit } from '../models/ownedunit';
 import { Unit } from '../models/unit';
-import { BaseConverter } from './base.converter';
+import { BaseConverter } from './baseconverter';
 
 @Converter(OwnedUnit)
 export class OwnedUnitConverter extends BaseConverter implements IConverter {
   public constructor() {
     super();
-    console.log('constructing')
   }
   public deserialize(data: any, target: any, base: any, deserializer: IDeserializer): OwnedUnit|undefined {
     const getUnit = () => {
@@ -32,7 +31,6 @@ export class OwnedUnitConverter extends BaseConverter implements IConverter {
   }
 
   public serialize(object: OwnedUnit, serializer: ISerializer): any {
-    console.log('custom')
     this.checkRequiredValue(object, PropertyRegistry.getProperties(OwnedUnit));
 
     const data: any = serializer(object.unit);

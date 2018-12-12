@@ -6,9 +6,8 @@
   "main": "build/app.js",
   "scripts": {
     "build": "npm run transpile:prod",
-    "mocha:e2e": "mocha --require dotenv/config --reporter spec --check-leaks build-test/e2e/**/*.spec.js",
-    "mocha:e2e:no-auth": "mocha --require dotenv/config --reporter spec --checkleaks --exclude build-test/e2e/explorateur*.spec.js build-test/e2e/**/*.spec.js",
-    "mocha:unit": "mocha --bail --require dotenv/config --reporter spec --checkleaks build-test/tests/**/*.spec.js",
+    "mocha:e2e": "mocha --require dotenv/config --check-leaks build-test/e2e/**/*.spec.js",
+    "mocha:unit": "mocha --require dotenv/config --check-leaks build-test/tests/**/*.spec.js",
     "start:dev": "nodemon --watch './src/**/*.ts' --ignore './node_modules/**/*' --exec \"ts-node --require dotenv/config\" ./src/app.ts",
     "start": "npm run transpile:prod && node ./build/app.js",
     "test": "npm run transpile:test && npm run mocha:unit && npm run mocha:e2e",

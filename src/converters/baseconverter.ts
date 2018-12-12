@@ -9,7 +9,7 @@ export abstract class BaseConverter {
     const instance = new target();
     const properties = PropertyRegistry.getProperties(target);
 
-    for (const key in Object.keys(object).filter(key => instance[key] !== 'function')) {
+    for (const key of Object.keys(object).filter(key => instance[key] !== 'function')) {
       const metadata = BaseConverter.getPropertyMetadata(properties, key);
       this.deserializeProperty(object, instance, key, metadata, deserializer);
     }

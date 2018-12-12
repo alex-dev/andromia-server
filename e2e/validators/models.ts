@@ -43,7 +43,7 @@ export function validateUnit(data: any) {
   data.runes.weapons.forEach((item: any) => {
     expect(item).to.be.a('string');
   });
-  expect(data.abilities).to.haveOwnProperty('abilities').that.is.an('array');
+  expect(data.runes).to.haveOwnProperty('abilities').that.is.an('array');
   data.runes.abilities.forEach((item: any) => {
     expect(item).to.be.a('string');
   });
@@ -57,7 +57,6 @@ export function validateOwnedUnits(data: any) {
 }
 
 export function validateOwnedUnit(data: any) {
-  console.log(data);
   expect(data).to.haveOwnProperty('href').that.is.a('string');
   validateUnit(data);
   validateRuneDictionnary(data, 'kernel');

@@ -1,14 +1,15 @@
 import { describe, before, it } from 'mocha';
 import { expect } from 'chai';
-import { inject } from '@tsed/testing';
+import { inject, bootstrap } from '@tsed/testing';
 import { ConverterService } from '../../src/services/converter.service';
 import { Unit } from '../../src/models/unit';
+import { RunesHolder } from '../../src/models/runesholder';
 import { validateUnit, validateUnits } from './import';
+import { Server } from '../../src/server';
 
-describe('Set:', () => {
-  const unit = new Unit(1, 'name', 'set', 10, 10, 'an url', 'affinity', ['ability'], ['weapon']);
+describe('Unit:', () => {
+  const unit = new Unit(1, 'name', 'set', 10, 10, 'an url', 'affinity', new RunesHolder(['ability'], ['weapon']));
   const json = {
-    href: 'href',
     number: 1,
     name: 'name',
     set: 'set',
@@ -23,7 +24,7 @@ describe('Set:', () => {
   }
 
   let converter: ConverterService;
-
+  before(bootstrap(Server));
   before(inject([ConverterService], (_converter: ConverterService) => {
     converter = _converter
   }));
@@ -41,14 +42,14 @@ describe('Set:', () => {
   describe('Deserialization', () => {
     it('should deserialize a value', () => {
       const data = converter.deserialize(json, Unit);
-      expect(data).to.be.a('Unit');
+      expect(data).to.be.instanceof(Unit);
     });
 
     it('should deserialize an array', () => {
       const data = converter.deserialize([json, json], Array, Unit);
-      expect(data).to.be.a('array');
+      expect(data).to.be.an('array');
       data.forEach((item: any) => {
-        expect(item).to.be.a('Unit');
+        expect(item).to.be.instanceof(Unit);
       });
     });
   });

@@ -2,17 +2,20 @@ import { ServerLoader, ServerSettings, GlobalAcceptMimesMiddleware } from '@tsed
 import * as parser from 'body-parser';
 import * as compress from 'compression';
 import * as override from 'method-override';
-const root = require('path').resolve(__dirname);
+import * as Path from 'path';
 
 @ServerSettings({
+  rootDir: Path.resolve(__dirname),
+  httpPort: process.env.SERVER_PORT_HTTP,
+  httpsPort: process.env.SERVER_PORT_HTTPS,
   acceptMimes: ['application/json'],
   mount: {
-
+    '': '${rootDir}/controllers/**/*.controller.js'
   },
   componentsScan: [
-    `${ root }/converters/**/*.converter.js`,
-    `${ root }/linkers/**/*.linker.js`,
-    `${ root }/services/**/**.js`
+    '${rootDir}/converters/**/*.converter.js',
+    '${rootDir}/linkers/**/*.linker.js',
+    '${rootDir}/services/**/*.js'
   ],
   debug: process.env.NODE_ENV != 'prod'
 })
@@ -28,12 +31,11 @@ export class Server extends ServerLoader {
       .use(parser.urlencoded({ extended: true }));
   }
 
-  public $onReady() {
-    const server = this.settings.getHttpPort();
-    console.log(`Server started on ${server.address}:${server.port}.`);
+  public $onInit() {
+    // TODO: Database
   }
 
   public $onServerInitError(err: any) {
-    console.log(err);
+    console.error(err);
   }
 }

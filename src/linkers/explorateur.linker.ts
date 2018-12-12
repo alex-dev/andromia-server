@@ -11,9 +11,9 @@ export class ExplorateurLinker implements LinkerInterface<Explorateur> {
 
   public link(explorateur: Explorateur): { href: string, explorations: string, units: string} {
     return {
-      href: `${ this.url.current }/${ explorateur._id }`,
-      explorations: `${ this.url.current }/${ explorateur._id }/explorations`,
-      units: `${ this.url.current }/${ explorateur._id }/units`
+      href: `${ this.url.current }/${ explorateur.name }`,
+      explorations: `${ this.url.current }/${ explorateur.name }/explorations`,
+      units: `${ this.url.current }/${ explorateur.name }/units`
     }
   }
 }

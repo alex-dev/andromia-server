@@ -12,7 +12,7 @@ export class ExplorationLinker implements LinkerInterface<Exploration> {
 
   private url(exploration: Exploration) {
     const explorateur = exploration.explorateur instanceof Explorateur
-      ? exploration.explorateur._id
+      ? exploration.explorateur.name
       : exploration.explorateur as string;
 
     return {
