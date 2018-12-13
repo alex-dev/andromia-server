@@ -1,9 +1,10 @@
 import { Required } from '@tsed/common';
 import { Explorateur } from './explorateur';
-import { UserInterface } from './user.interface';
 import * as bcrypt from 'bcrypt';
+import { Deprecated } from '@tsed/core';
 
-export class InputExplorateur implements UserInterface {
+@Deprecated('Removed when login implemented. I wish to keep algorithms around.')
+export class InputExplorateur {
   @Required() public email: string;
   @Required() public name: string;
   @Required() public password: string;
@@ -23,6 +24,7 @@ export class InputExplorateur implements UserInterface {
   }
 }
 
+@Deprecated('Removed when login implemented. I wish to keep algorithms around.')
 export class Login {
   @Required() public name: string;
   @Required() public password: string;

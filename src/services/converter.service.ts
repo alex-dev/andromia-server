@@ -21,10 +21,6 @@ export class ConverterService extends BaseConverter {
       const serializer: ISerializer = object => this.serialize(object, options);
 
       try {
-        if (isEmpty(object)) {
-          return object;
-        }
-
         return this.serializeConverter(object, serializer)
           || this.serializeSerializable(object, options)
           || this.serializeDefault(object, serializer, type, checkRequiredValue);
@@ -45,11 +41,15 @@ export class ConverterService extends BaseConverter {
     // Handle merging. If serialized data is string, can be replaced by linker.
     const merge = (data: any, link: any) => {
       for (const [key, value] of Object.entries(link)
-        .filter(([key, value]) => !data[key] || data[key] instanceof String)) {
+        .filter(([key, value]) => !data[key] || typeof data[key] == 'string')) {
         data[key] = value;
       }
 
       return data;
+    }
+
+    if (isEmpty(object)) {
+      return object;
     }
 
     return merge(serializer(), linker() || {});

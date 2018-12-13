@@ -31,15 +31,17 @@ export class OwnedUnitConverter extends BaseConverter implements IConverter {
   }
 
   public serialize(object: OwnedUnit, serializer: ISerializer): any {
-    this.checkRequiredValue(object, PropertyRegistry.getProperties(OwnedUnit));
-
-    const data: any = serializer(object.unit);
+    const properties = PropertyRegistry.getProperties(OwnedUnit);
+    this.checkRequiredValue(object, properties);
     
-    for (const [key, value] of Object.entries(object)
-      .filter(([key, value]) => typeof value !== 'function' && key !== 'unit')) {
-      data[key] = serializer(value);
+    const value: any = serializer(object.unit);
+    delete value.href;
+
+    for (const key of [...properties.keys()].filter(key => key !== 'unit')) {
+      const metadata = BaseConverter.getPropertyMetadata(properties, key);
+      value[(metadata && metadata.name) || key] = serializer((object as any)[key]);
     }
 
-    return data;
+    return value;
   }
 }

@@ -1,9 +1,17 @@
 import { IgnoreProperty, Required, Minimum } from '@tsed/common';
-import { Indexed, Model, Unique, Ref } from '@tsed/mongoose';
+import { Indexed, Model, Unique, Ref, Schema } from '@tsed/mongoose';
 import { Ability, Set } from './types';
 import { RunesHolder } from './runesholder';
 
-@Model()
+@Model({
+  collection: 'units',
+  schemaOptions: {
+    strict: 'throw',
+    useNestedStrict: true,
+    versionKey: false,
+    timestamps: false
+  }
+})
 export class Unit {
   @IgnoreProperty() public _id = '';
   @Unique() @Required() public number: number;
@@ -13,7 +21,7 @@ export class Unit {
   @Minimum(0) @Required() public speed: number;
   @Required() public imageURL: string;
   @Indexed() @Required() public affinity: Ability;
-  @Required() @Ref('RunesHolder') public runes: RunesHolder;
+  @Required() @Ref('RunesHolder') @Schema({ autopopulate: true }) public runes: RunesHolder;
 
   public constructor(number: number, name: string, set: Set, life: number, speed: number, imageURL: string, affinity: Ability, runes: RunesHolder) {
     this.number = number;

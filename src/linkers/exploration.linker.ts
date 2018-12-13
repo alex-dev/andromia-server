@@ -17,13 +17,16 @@ export class ExplorationLinker implements LinkerInterface<Exploration> {
 
     return {
       current: `${ this._url.current }/${ explorateur }/explorations`,
+      explorateur: `${ this._url.current }/${ explorateur }`,
       server: this._url.server
     }
   }
 
-  public link(exploration: Exploration): { href: string } {
+  public link(exploration: Exploration): { href: string, explorateur: string } {
+    const url = this.url(exploration);
     return {
-      href: `${ this.url(exploration).current }/${ exploration._id }`
+      href: `${ url.current }/${ exploration._id }`,
+      explorateur: url.explorateur
     }
   }
 }

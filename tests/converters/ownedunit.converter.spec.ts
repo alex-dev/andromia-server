@@ -15,7 +15,6 @@ describe('OwnedUnit:', () => {
     new Unit(1, 'name', 'set', 10, 10, 'an url', 'affinity', new RunesHolder(['ability'], ['weapon'])),
     new Map<Ability, number>([['ability1', 1], ['ability2', 2]]));
   const json = {
-    href: 'href',
     number: 1,
     name: 'name',
     set: 'set',

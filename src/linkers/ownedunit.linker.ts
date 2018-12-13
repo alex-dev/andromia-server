@@ -18,15 +18,18 @@ export class OwnedUnitLinker implements LinkerInterface<OwnedUnit> {
 
     return {
       current: `${ this._url.current }/${ explorateur }/explorations`,
+      explorateur: `${ this._url.current }/${ explorateur }`,
       server: this._url.server
     }
   }
 
-  public link(unit: OwnedUnit): { href: string, unit: string } {
+  public link(unit: OwnedUnit): { unit: string, href?: string, explorateur?: string } {
     const url = this.url(unit);
-    return {
-      href: `${ url.current }/${ unit.uuid }`,
+    return Object.assign({
       unit: `${ url.server }/units/${ unit.unit instanceof Unit ? unit.unit.name : unit.unit as string }`
-    }
+    }, unit.explorateur && {
+      href: `${ url.current }/${ unit.uuid }`,
+      explorateur: url.explorateur 
+    });
   }
 }

@@ -1,13 +1,19 @@
 import { describe, before, it } from 'mocha';
 import { expect } from 'chai';
-import { inject } from '@tsed/testing';
+import { inject, bootstrap } from '@tsed/testing';
 import { ConverterService } from '@tsed/common';
 import { Exploration } from '../../src/models/exploration';
+import { Ability } from '../../src/models/types';
 import { validateExploration, validateExplorations } from './import';
+import { Unit } from '../../src/models/unit';
+import { RunesHolder } from '../../src/models/runesholder';
+import { UnitResult } from '../../src/models/unitresult';
+import { OwnedUnit } from '../../src/models/ownedunit';
+import { Server } from '../../src/server';
 
 describe('Exploration:', () => {
   let converter: ConverterService;
-
+  before(bootstrap(Server));
   before(inject([ConverterService], (_converter: ConverterService) => {
     converter = _converter
   }));
@@ -16,20 +22,9 @@ describe('Exploration:', () => {
     const exploration = new Exploration(new Date(), new Date(), 'destination');
     exploration.from = 'inoxis';
     const json = {
-      href: 'href',
-      number: 1,
-      name: 'name',
-      set: 'set',
-      life: 10,
-      speed: 10,
-      imageURL: 'an url',
-      affinity: 'affinity',
-      runes: {
-        abilities: ['ability'],
-        weapons: ['weapons']
-      },
-      uuid: 'uuid',
-      kernel: { ability1: 1, ability2: 2 }
+      started: new Date().toJSON(),
+      ended: new Date().toJSON(),
+      to: 'Inopxis'
     }
   
     describe('Serialization', () => {
@@ -45,14 +40,177 @@ describe('Exploration:', () => {
     describe('Deserialization', () => {
       it ('should deserialize a value', () => {
         const data = converter.deserialize(json, Exploration);
-        expect(data).to.be.an('Exploration');
+        expect(data).to.be.instanceof(Exploration);
       });
 
       it('should deserialize an array', () => {
         const data = converter.deserialize([json, json], Array, Exploration);
         expect(data).to.be.an('array');
         data.forEach((item: any) => {
-          expect(item).to.be.an('Exploration');
+          expect(item).to.be.instanceof(Exploration);
+        });
+      });
+    });
+  });
+
+  describe('With runes and without unit', () => {
+    const exploration = new Exploration(new Date(), new Date(), 'destination', null, new Map<Ability, number>([
+      ['a', 1],
+      ['b', 2]
+    ]));
+    exploration.from = 'inoxis';
+    const json = {
+      started: new Date().toJSON(),
+      ended: new Date().toJSON(),
+      to: 'Inopxis',
+      runes: {
+        a: 1,
+        b: 2
+      }
+    }
+  
+    describe('Serialization', () => {
+      it ('should serialize a value', () => {
+        validateExploration(converter.serialize(exploration));
+      });
+
+      it('should serialize an array', () => {
+        validateExplorations(converter.serialize([exploration, exploration]));
+      });
+    });
+
+    describe('Deserialization', () => {
+      it ('should deserialize a value', () => {
+        const data = converter.deserialize(json, Exploration);
+        expect(data).to.be.instanceof(Exploration);
+      });
+
+      it('should deserialize an array', () => {
+        const data = converter.deserialize([json, json], Array, Exploration);
+        expect(data).to.be.an('array');
+        data.forEach((item: any) => {
+          expect(item).to.be.instanceof(Exploration);
+        });
+      });
+    });
+  });
+
+  describe('Without runes and with unit', () => {
+    const exploration = new Exploration(new Date(), new Date(), 'destination', new UnitResult(
+      new OwnedUnit('dsf', new Unit(1, 'dsf', 'a', 10, 11, 'dsf', 's', new RunesHolder([], [])), new Map<Ability, number>()),
+      false));
+    exploration.from = 'inoxis';
+    const json = {
+      started: new Date().toJSON(),
+      ended: new Date().toJSON(),
+      to: 'Inopxis',
+      unit: {
+        unit: {
+          uuid: 'dsf',
+          unit: {
+            number: 1,
+            name: 'dsf',
+            set: 'a',
+            life: 10,
+            speed: 11,
+            imageURL: 'dsf',
+            affinity: 's',
+            runes: {
+              abilities: [],
+              weapons: []
+            }
+          },
+          kernel: {}
+        },
+        accepted: false
+      }
+    }
+  
+    describe('Serialization', () => {
+      it ('should serialize a value', () => {
+        validateExploration(converter.serialize(exploration));
+      });
+
+      it('should serialize an array', () => {
+        validateExplorations(converter.serialize([exploration, exploration]));
+      });
+    });
+
+    describe('Deserialization', () => {
+      it ('should deserialize a value', () => {
+        const data = converter.deserialize(json, Exploration);
+        expect(data).to.be.instanceof(Exploration);
+      });
+
+      it('should deserialize an array', () => {
+        const data = converter.deserialize([json, json], Array, Exploration);
+        expect(data).to.be.an('array');
+        data.forEach((item: any) => {
+          expect(item).to.be.instanceof(Exploration);
+        });
+      });
+    });
+  });
+
+  describe('With runes and unit', () => {
+    const exploration = new Exploration(new Date(), new Date(), 'destination', new UnitResult(
+      new OwnedUnit('dsf', new Unit(1, 'dsf', 'a', 10, 11, 'dsf', 's', new RunesHolder([], [])), new Map<Ability, number>()),
+      false), new Map<Ability, number>([
+        ['a', 1],
+        ['b', 2]
+      ]));
+    exploration.from = 'inoxis';
+    const json = {
+      started: new Date().toJSON(),
+      ended: new Date().toJSON(),
+      to: 'Inopxis',
+      unit: {
+        unit: {
+          uuid: 'dsf',
+          unit: {
+            number: 1,
+            name: 'dsf',
+            set: 'a',
+            life: 10,
+            speed: 11,
+            imageURL: 'dsf',
+            affinity: 's',
+            runes: {
+              abilities: [],
+              weapons: []
+            }
+          },
+          kernel: {}
+        },
+        accepted: false
+      },
+      runes: {
+        a: 1,
+        b: 2
+      }
+    }
+  
+    describe('Serialization', () => {
+      it ('should serialize a value', () => {
+        validateExploration(converter.serialize(exploration));
+      });
+
+      it('should serialize an array', () => {
+        validateExplorations(converter.serialize([exploration, exploration]));
+      });
+    });
+
+    describe('Deserialization', () => {
+      it ('should deserialize a value', () => {
+        const data = converter.deserialize(json, Exploration);
+        expect(data).to.be.instanceof(Exploration);
+      });
+
+      it('should deserialize an array', () => {
+        const data = converter.deserialize([json, json], Array, Exploration);
+        expect(data).to.be.an('array');
+        data.forEach((item: any) => {
+          expect(item).to.be.instanceof(Exploration);
         });
       });
     });

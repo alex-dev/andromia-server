@@ -1,34 +1,33 @@
-import { Property, Required } from '@tsed/common';
-import { Model, Unique, Ref } from '@tsed/mongoose';
+import { Property, Required, IgnoreProperty } from '@tsed/common';
+import { Model, Ref, Schema } from '@tsed/mongoose';
 import { Explorateur } from './explorateur';
 import { Ability, Location } from './types';
-import { OwnedUnit } from './ownedunit';
+import { UnitResult } from './unitresult';
 
-class UnitResult {
-  @Ref(OwnedUnit) @Unique() @Required() public unit: Ref<OwnedUnit>;
-  @Required() public accepted: boolean;
-
-  public constructor(unit: OwnedUnit, accepted: boolean) {
-    this.unit = unit;
-    this.accepted = accepted;
+@Model({
+  collection: 'explorations',
+  schemaOptions: {
+    strict: 'throw',
+    useNestedStrict: true,
+    versionKey: false,
+    timestamps: false
   }
-}
-
-@Model()
+})
 export class Exploration {
   @Property('id') public _id = '';
-  @Property('explorateur') @Ref('Explorateur') public explorateur: Ref<Explorateur> = '';
-  @Required() public started: Date;  @Required() public ended: Date;
+  @IgnoreProperty() @Ref('Explorateur') public explorateur: Ref<Explorateur> = '';
+  @Required() public started: Date;
+  @Required() public ended: Date;
   @Property() public from: Location | null = null;
   @Required() public to: Location;
-  @Property() public unit: UnitResult | null;
+  @Property() @Ref('UnitResult') @Schema({ autopopulate: true }) public unit: Ref<UnitResult>|null;
   @Property() public runes: Map<Ability, number>;
 
-  public constructor(started: Date, ended: Date, to: Location, unit?: UnitResult, runes = new Map<Ability, number>()) {
+  public constructor(started: Date, ended: Date, to: Location, unit: UnitResult|null = null, runes = new Map<Ability, number>()) {
     this.started = started;
     this.ended = ended;
     this.to = to;
-    this.unit = unit || null;
+    this.unit = unit;
     this.runes = runes;
   }
 

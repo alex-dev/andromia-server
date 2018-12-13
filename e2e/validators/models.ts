@@ -30,7 +30,9 @@ export function validateUnits(data: any) {
 }
 
 export function validateUnit(data: any) {
-  expect(data).to.haveOwnProperty('href').that.is.a('string');
+  if (!data.unit) {
+    expect(data).to.haveOwnProperty('href').that.is.a('string');
+  }
   expect(data).to.haveOwnProperty('number').that.is.a('number');
   expect(data).to.haveOwnProperty('name').that.is.a('string');
   expect(data).to.haveOwnProperty('set').that.is.a('string');
@@ -57,7 +59,11 @@ export function validateOwnedUnits(data: any) {
 }
 
 export function validateOwnedUnit(data: any) {
-  expect(data).to.haveOwnProperty('href').that.is.a('string');
+  if (data.href) {
+    expect(data.href).to.be.a('string');
+    expect(data).to.haveOwnProperty('explorateur').that.is.a('string');
+  }
+  expect(data).to.haveOwnProperty('unit').that.is.a('string');
   validateUnit(data);
   validateRuneDictionnary(data, 'kernel');
   expect(data).to.haveOwnProperty('uuid').that.is.a('string');
@@ -72,15 +78,24 @@ export function validateExplorations(data: any) {
 
 export function validateExploration(data: any) {
   expect(data).to.haveOwnProperty('href').that.is.a('string');
+  expect(data).to.haveOwnProperty('explorateur').that.is.a('string');
   validateDate(data, 'started');
   validateDate(data, 'ended');
-  validateRuneDictionnary(data, 'runes');
   expect(data).to.haveOwnProperty('from').that.is.a('string');
   expect(data).to.haveOwnProperty('to').that.is.a('string');
-  expect(data).to.haveOwnProperty('unit').that.is.an('object');
-  expect(data.unit).to.haveOwnProperty('accepted').that.is.a('boolean');
-  expect(data.unit).to.haveOwnProperty('unit').that.is.an('object');
-  validateOwnedUnit(data.unit.unit);
+  
+  if (data.runes) {
+    validateRuneDictionnary(data, 'runes');
+  }
+  
+  if (data.unit) {
+    expect(data.unit).to.be.an('object');
+    expect(data.unit).to.haveOwnProperty('accepted').that.is.a('boolean');
+    expect(data.unit).to.haveOwnProperty('unit').that.is.an('object');
+    validateOwnedUnit(data.unit.unit);
+  } else {
+    expect(data.unit).to.be.null;
+  }
 }
 
 export function validateExplorateurs(data: any) {
@@ -90,7 +105,7 @@ export function validateExplorateurs(data: any) {
   });
 }
 
-export function validateExplorateur(data: any, expandUnits = false, expandExplorations = false) {
+export function validateExplorateur(data: any, _?: any, __?: any) {
   expect(data).to.haveOwnProperty('href').that.is.a('string');
   expect(data).to.haveOwnProperty('email').that.is.a('string');
   expect(data).to.haveOwnProperty('name').that.is.a('string');
@@ -98,24 +113,10 @@ export function validateExplorateur(data: any, expandUnits = false, expandExplor
   expect(data).to.haveOwnProperty('location').that.is.a('string');
   expect(data).to.haveOwnProperty('inox').that.is.a('number');
   validateRuneDictionnary(data, 'runes');
-  if (expandExplorations) {
-    expect(data).to.haveOwnProperty('explorations').that.is.an('array');
-    data.explorations.forEach((item: any) => {
-      validateOwnedUnit(item);
-    });
-  } else {
-    expect(data).to.haveOwnProperty('explorations').that.is.a('string');
-    expect(data.explorations.includes(`${data.name}/explorations`)).to.be.true;
-  }
-  if (expandUnits) {
-    expect(data).to.haveOwnProperty('units').that.is.an('array');
-    data.units.forEach((item: any) => {
-      validateOwnedUnit(item);
-    });
-  } else {
-    expect(data).to.haveOwnProperty('units').that.is.a('string');
-    expect(data.units.includes(`${data.name}/units`)).to.be.true;
-  }
+  expect(data).to.haveOwnProperty('explorations').that.is.a('string');
+  expect(data.explorations.includes(`${data.name}/explorations`)).to.be.true;
+  expect(data).to.haveOwnProperty('units').that.is.a('string');
+  expect(data.units.includes(`${data.name}/units`)).to.be.true;
 }
 
 export function validateRunesCounts(data: any) {

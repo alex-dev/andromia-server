@@ -1,9 +1,18 @@
-import { Required } from '@tsed/common';
+import { IgnoreProperty, Required } from '@tsed/common';
 import { Model, } from '@tsed/mongoose';
 import { Ability, Weapon } from './types';
 
-@Model()
+@Model({
+  collection: 'runesholders',
+  schemaOptions: {
+    strict: 'throw',
+    useNestedStrict: true,
+    versionKey: false,
+    timestamps: false
+  }
+})
 export class RunesHolder {
+  @IgnoreProperty() public _id = '';
   @Required() public abilities: Ability[];
   @Required() public weapons: Weapon[];
 
