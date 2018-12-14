@@ -7,36 +7,34 @@ import * as Path from 'path';
 
 @ServerSettings({
   debug: process.env.NODE_ENV != 'prod',
+  port: process.env.PORT,
   rootDir: Path.resolve(__dirname),
-  httpsPort: process.env.PORT,
   acceptMimes: ['application/json'],
   mount: {
-    '': '${rootDir}/controllers/**/*.controller.js'
+    '/': '${rootDir}/controllers/**/*.controller.?s'
   },
   componentsScan: [
     '${rootDir}/converters/**/*.converter.js',
-    '${rootDir}/linkers/**/*.linker.js',
+    '${rootDir}/middlewares/**/*.middleware.js',
     '${rootDir}/services/**/*.js'
   ],
   mongoose: {
     url: process.env.MONGO_URL,
     connectionOptions: {
       poolSize: 10,
-      user: '',
-      pass: '',
+      user: 'admin',
+      pass: 'andromia1',
       config: {
         autoCreate: true,
         autoIndex: true
       }
     }
+  },
+  passport: {
+    secret: process.env.SECRET || 'There is no better secret than none'
   }
 })
 export class Server extends ServerLoader {
-  public $onInit() {
-
-    // TODO: Database
-  }
-
   public $onMountingMiddlewares(): void|Promise<void> {
     this.use(GlobalAcceptMimesMiddleware)
       .use(compress({}))

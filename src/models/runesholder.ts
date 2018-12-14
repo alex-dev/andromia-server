@@ -12,7 +12,7 @@ import { Ability, Weapon } from './types';
   }
 })
 export class RunesHolder {
-  @IgnoreProperty() public _id = '';
+  @IgnoreProperty() public _id: string|undefined;
   @Required() public abilities: Ability[];
   @Required() public weapons: Weapon[];
 

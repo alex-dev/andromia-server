@@ -1,9 +1,10 @@
-import { IgnoreProperty, Property, PropertyType, Required, Email } from '@tsed/common';
-import { Indexed, Model, Ref, Unique } from '@tsed/mongoose';
+import { IgnoreProperty, Property, Required, Email, Minimum } from '@tsed/common';
+import { Indexed, Model, Ref, Unique, PostHook } from '@tsed/mongoose';
 import { Ability, Location } from './types';
 import { Exploration } from './exploration';
 import { OwnedUnit } from './ownedunit';
 import { UnitResult } from './unitresult';
+import { conflictMiddleware } from '../mongoose.middlewares/conflict.middleware';
 
 @Model({
   collection: 'explorateurs',
@@ -14,17 +15,21 @@ import { UnitResult } from './unitresult';
     timestamps: false
   }
 })
+@PostHook('save', conflictMiddleware)
+@PostHook('update', conflictMiddleware)
+@PostHook('findOneAndUpdate', conflictMiddleware)
+@PostHook('insertMany', conflictMiddleware)
 export class Explorateur {
-  @IgnoreProperty() public _id = '';
+  @IgnoreProperty() public _id: string|undefined;
   @Email() @Unique() @Required() public email: string;
   @Unique() @Required() public name: string;
-  @IgnoreProperty() public password: string;
+  @Required() public password: string;
   @Indexed() @Property() public location: Location = 'Inoxis';
   @Property() public inox: number = 0;
   @Property() public runes: Map<Ability, number> = new Map<Ability, number>();
 
   public constructor(email: string, name: string, password: string) {
-    this.email = email;
+    this.email = email.toLowerCase();
     this.name = name;
     this.password = password;
   }

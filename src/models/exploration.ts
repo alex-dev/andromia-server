@@ -1,8 +1,9 @@
 import { Property, Required, IgnoreProperty } from '@tsed/common';
-import { Model, Ref, Schema } from '@tsed/mongoose';
+import { Model, Ref, Schema, PostHook } from '@tsed/mongoose';
 import { Explorateur } from './explorateur';
 import { Ability, Location } from './types';
 import { UnitResult } from './unitresult';
+import { conflictMiddleware } from '../mongoose.middlewares/conflict.middleware';
 
 @Model({
   collection: 'explorations',
@@ -13,9 +14,13 @@ import { UnitResult } from './unitresult';
     timestamps: false
   }
 })
+@PostHook('save', conflictMiddleware)
+@PostHook('update', conflictMiddleware)
+@PostHook('findOneAndUpdate', conflictMiddleware)
+@PostHook('insertMany', conflictMiddleware)
 export class Exploration {
-  @Property('id') public _id = '';
-  @IgnoreProperty() @Ref('Explorateur') public explorateur: Ref<Explorateur> = '';
+  @Property('id') public _id: string|undefined;
+  @IgnoreProperty() @Ref('Explorateur') @Schema({ autopopulate: true }) public explorateur: Ref<Explorateur> = '';
   @Required() public started: Date;
   @Required() public ended: Date;
   @Property() public from: Location | null = null;

@@ -1,6 +1,12 @@
+import { UnprocessableEntity, Unauthorized as BasicUnauthorized } from 'ts-httpexceptions';
 import { nameOf, Type } from '@tsed/core';
-import { UnprocessableEntity } from 'ts-httpexceptions';
 import { IResponseError } from '@tsed/common';
+
+export class Unauthorized extends BasicUnauthorized implements IResponseError {
+  public readonly headers = {
+    'WWW-Authenticate': { value: 'Bearer' }
+  };
+}
 
 export class UnknownPropertyError extends UnprocessableEntity {
   public constructor(target: Type<any>, name: string|symbol) {

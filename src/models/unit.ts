@@ -1,7 +1,8 @@
 import { IgnoreProperty, Required, Minimum } from '@tsed/common';
-import { Indexed, Model, Unique, Ref, Schema } from '@tsed/mongoose';
+import { Indexed, Model, Unique, Ref, Schema, PostHook } from '@tsed/mongoose';
 import { Ability, Set } from './types';
 import { RunesHolder } from './runesholder';
+import { conflictMiddleware } from '../mongoose.middlewares/conflict.middleware';
 
 @Model({
   collection: 'units',
@@ -12,8 +13,12 @@ import { RunesHolder } from './runesholder';
     timestamps: false
   }
 })
+@PostHook('save', conflictMiddleware)
+@PostHook('update', conflictMiddleware)
+@PostHook('findOneAndUpdate', conflictMiddleware)
+@PostHook('insertMany', conflictMiddleware)
 export class Unit {
-  @IgnoreProperty() public _id = '';
+  @IgnoreProperty() public _id: string|undefined;
   @Unique() @Required() public number: number;
   @Unique() @Required() public name: string;
   @Indexed() @Required() public set: Set;
