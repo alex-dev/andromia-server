@@ -11,6 +11,7 @@ export class LocalLocationMiddleware implements IMiddleware {
     const data = this.converter.serialize(entity);
     
     if (data.href) {
+      console.log(data.href)
       response.setHeader('Location', data.href);
     }
   }

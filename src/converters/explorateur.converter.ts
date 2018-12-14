@@ -9,7 +9,7 @@ export class ExplorateurConverter extends BaseConverter implements IConverter {
   }
 
   public serialize(object: Explorateur, serializer: ISerializer): any {
-    const value = this.serializeDefault(object, serializer, true);
+    const value = this.serializeDefault(object, serializer, Explorateur, true);
     delete value.password;
     return value;
   }

@@ -1,4 +1,4 @@
-import { getClass, isEmpty, Metadata, Store, isArrayOrArrayClass } from '@tsed/core';
+import { getClass, isEmpty, Metadata, isArrayOrArrayClass } from '@tsed/core';
 import { ConverterService as Converter, IConverterOptions, InjectorService, OverrideService, ServerSettingsService, IConverter, IDeserializer, ISerializer } from '@tsed/common';
 import { ConverterSerializationError } from '@tsed/common/lib/converters/errors/ConverterSerializationError';
 import { ConverterDeserializationError } from '@tsed/common/lib/converters/errors/ConverterDeserializationError';
@@ -6,10 +6,15 @@ import { CONVERTER } from '@tsed/common/lib/converters/constants/index';
 import { BadRequest, InternalServerError } from 'ts-httpexceptions';
 import { LinkerProvider } from './linker.provider';
 import { BaseConverter } from '../converters/baseconverter';
+import { Mongoose } from 'mongoose';
+import { MongooseDocumentToModelService } from './mongooseDocumentToModel.service';
 
 @OverrideService(Converter)
 export class ConverterService extends BaseConverter {
-  public constructor(private injector: InjectorService, settings: ServerSettingsService) {
+  public constructor(
+    private mongoose: MongooseDocumentToModelService,
+    private injector: InjectorService,
+    settings: ServerSettingsService) {
     super();
     this.validation = settings.get<boolean>('validationModelStrict');
   }
@@ -34,7 +39,11 @@ export class ConverterService extends BaseConverter {
     }
 
     const linker = () => {
-      const linker = this.injector.get<LinkerProvider>(LinkerProvider)!.get<any>(getClass(object));
+      const target = object && object.constructor && (object.constructor.base instanceof Mongoose)
+        ? this.mongoose.getModel(object)
+        : getClass(object)
+      
+      const linker = this.injector.get<LinkerProvider>(LinkerProvider)!.get<any>(target);
       return linker && linker.link(object);
     }
 
@@ -79,6 +88,10 @@ export class ConverterService extends BaseConverter {
   }
 
   public getConverter(target: any): IConverter|undefined {
+    if (target && target.constructor && (target.constructor.base instanceof Mongoose)) {
+      target = this.mongoose.getModel(target);
+    }
+
     const converter = Metadata.get(CONVERTER, target);
     return converter && this.injector.get(converter);
   }

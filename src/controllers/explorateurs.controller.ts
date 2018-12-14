@@ -24,8 +24,7 @@ export class ExplorateursController {
     }
 
     const explorateur = new Explorateur(email, name, await bcrypt.hash(password, 11));
-    await this.explorateurs.create(explorateur);
-    return explorateur;
+    return await this.explorateurs.create(explorateur);
   }
 
   @Get('')

@@ -1,4 +1,4 @@
-import { IConverter, Converter, IDeserializer, ISerializer, PropertyMetadata, PropertyRegistry } from '@tsed/common';
+import { IConverter, Converter, IDeserializer, ISerializer, PropertyRegistry } from '@tsed/common';
 import { OwnedUnit } from '../models/ownedunit';
 import { Unit } from '../models/unit';
 import { BaseConverter } from './baseconverter';
