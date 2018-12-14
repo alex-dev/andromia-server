@@ -65,7 +65,6 @@ export class JWTAuthenticationService implements AfterRoutesInit {
   }
 
   private async validateLoggedIn({id, name, email, password}: JWT): Promise<Explorateur> {
-    console.log(id, name, email, password);
     const explorateur = await this.explorateurs.findOne({
       _id: id,
       name: name,

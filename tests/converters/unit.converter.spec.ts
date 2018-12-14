@@ -6,6 +6,7 @@ import { Unit } from '../../src/models/unit';
 import { RunesHolder } from '../../src/models/runesholder';
 import { validateUnit, validateUnits } from './import';
 import { Server } from '../../src/server';
+import { ResponseSerializerService } from '../../src/services/responseSerializer.service';
 
 describe('Unit:', () => {
   const unit = new Unit(1, 'name', 'set', 10, 10, 'an url', 'affinity', new RunesHolder(['ability'], ['weapon']));
@@ -24,18 +25,20 @@ describe('Unit:', () => {
   }
 
   let converter: ConverterService;
+  let serializer: ResponseSerializerService;
   before(bootstrap(Server));
-  before(inject([ConverterService], (_converter: ConverterService) => {
-    converter = _converter
+  before(inject([ConverterService, ResponseSerializerService], (_converter: ConverterService, _serializer: ResponseSerializerService) => {
+    converter = _converter;
+    serializer = _serializer;
   }));
 
   describe('Serialization', () => {
     it('should serialize a value', () => {
-      validateUnit(converter.serialize(unit));
+      validateUnit(serializer.serialize(unit));
     });
 
     it('should serialize an array', () => {
-      validateUnits(converter.serialize([unit, unit]));
+      validateUnits(serializer.serialize([unit, unit]));
     });
   });
 

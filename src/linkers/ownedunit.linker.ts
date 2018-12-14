@@ -1,35 +1,30 @@
-import { Service } from '@tsed/common';
-import { LinkerInterface } from './linker.interface';
+import { AbstractLinker } from './linker.abstract';
 import { Explorateur } from '../models/explorateur';
 import { OwnedUnit } from '../models/ownedunit';
 import { Unit } from '../models/unit';
 
-@Service()
-export class OwnedUnitLinker implements LinkerInterface<OwnedUnit> {
-  private readonly _url = {
-    current: `${ process.env.SERVER_URL }/explorateurs`,
-    server: process.env.SERVER_URL
-  };
-
+export class OwnedUnitLinker extends AbstractLinker<OwnedUnit> {
   private url(unit: OwnedUnit) {
-    const explorateur = unit.explorateur instanceof Explorateur
-      ? unit.explorateur.name
-      : unit.explorateur as string;
+    return this.provider.get<Explorateur>(unit.explorateur as Explorateur)
+      .link(unit.explorateur as Explorateur).href;
+  }
 
-    return {
-      current: `${ this._url.current }/${ explorateur }/explorations`,
-      explorateur: `${ this._url.current }/${ explorateur }`,
-      server: this._url.server
+  public link(unit: OwnedUnit): UnitLinkInterface {
+    const value = {
+      unit: this.provider.get<Unit>(unit.unit as Unit).link(unit.unit as Unit).href
+    } as UnitLinkInterface;
+
+    if (unit.explorateur) {
+      value.explorateur = this.url(unit);
+      value.href = `${ value.explorateur }/unit/${ unit.uuid }`;
     }
-  }
 
-  public link(unit: OwnedUnit): { unit: string, href?: string, explorateur?: string } {
-    const url = this.url(unit);
-    return Object.assign({
-      unit: `${ url.server }/units/${ unit.unit instanceof Unit ? unit.unit.name : unit.unit as string }`
-    }, unit.explorateur && {
-      href: `${ url.current }/${ unit.uuid }`,
-      explorateur: url.explorateur 
-    });
+    return value;
   }
+}
+
+export interface UnitLinkInterface {
+  href?: string;
+  explorateur?: string;
+  unit: string;
 }

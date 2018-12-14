@@ -5,11 +5,9 @@ import * as passport from 'passport';
 @OverrideMiddleware(AuthenticatedMiddleware)
 export class AuthenticationMiddleware implements IMiddleware {
   private async run(strategy: string, request: ExpressRequest, response: ExpressResponse) {
-    console.log(strategy);
     return new Promise<void>((resolve, reject) => passport.authenticate(strategy, {
       failWithError: true
     }, (error: any, user: any) => {
-      console.log(user, error);
       if (error || !user) {
         reject(error);
       }

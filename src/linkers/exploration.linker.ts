@@ -1,32 +1,37 @@
-import { Service } from '@tsed/common';
-import { LinkerInterface } from './linker.interface';
+import { AbstractLinker, BasicLinkInterface } from './linker.abstract';
 import { Explorateur } from '../models/explorateur';
 import { Exploration } from '../models/exploration';
+import { UnitLinkInterface } from './ownedunit.linker';
+import { OwnedUnit } from '../models/ownedunit';
+import { UnitResult } from '../models/unitresult';
 
-@Service()
-export class ExplorationLinker implements LinkerInterface<Exploration> {
-  private readonly _url = {
-    current: `${ process.env.SERVER_URL }/explorateurs`,
-    server: process.env.SERVER_URL
-  };
-
+export class ExplorationLinker extends AbstractLinker<Exploration> {
   private url(exploration: Exploration) {
-    const explorateur = exploration.explorateur instanceof Explorateur
-      ? exploration.explorateur.name
-      : exploration.explorateur as string;
-
-    return {
-      current: `${ this._url.current }/${ explorateur }/explorations`,
-      explorateur: `${ this._url.current }/${ explorateur }`,
-      server: this._url.server
-    }
+    return this.provider.get<Explorateur>(exploration.explorateur as Explorateur)
+      .link(exploration.explorateur as Explorateur).href;
   }
 
-  public link(exploration: Exploration): { href: string, explorateur: string } {
+  public link(exploration: Exploration): ExplorationLinkInterface {
     const url = this.url(exploration);
-    return {
-      href: `${ url.current }/${ exploration._id }`,
-      explorateur: url.explorateur
+    const value = {
+      href: `${ url }/explorations/${ exploration._id }`,
+      explorateur: url,
+    } as ExplorationLinkInterface;
+
+    if (exploration.unit) {
+      value.unit = {
+        unit: this.provider.get<OwnedUnit>((exploration.unit as UnitResult).unit as OwnedUnit)
+          .link((exploration.unit as UnitResult).unit as OwnedUnit)
+      };
     }
+
+    return value;
+  }
+}
+
+export interface ExplorationLinkInterface extends BasicLinkInterface {
+  explorateur: string
+  unit?: {
+    unit: UnitLinkInterface
   }
 }

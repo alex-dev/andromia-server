@@ -1,17 +1,12 @@
-import { Service } from '@tsed/common';
-import { LinkerInterface } from './linker.interface';
+import { AbstractLinker, BasicLinkInterface } from './linker.abstract';
 import { Unit } from '../models/unit';
 
-@Service()
-export class UnitLinker implements LinkerInterface<Unit> {
-  private readonly url = {
-    current: `${ process.env.SERVER_URL }/units`,
-    server: process.env.SERVER_URL
-  };
+export class UnitLinker extends AbstractLinker<Unit> {
+  private readonly url = `${ process.env.SERVER_URL }/units`
 
-  public link(unit: Unit): { href: string } {
+  public link(unit: Unit): BasicLinkInterface {
     return {
-      href: `${ this.url.current }/${ unit.name }`
+      href: `${ this.url }/${ unit.name }`
     }
   }
 }

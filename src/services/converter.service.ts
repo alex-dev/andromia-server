@@ -21,47 +21,23 @@ export class ConverterService extends BaseConverter {
 
   public serialize(object: any, options: IConverterOptions = {}): any {
     const { type, checkRequiredValue = true} = options;
-
-    const serializer = () => {
-      const serializer: ISerializer = object => this.serialize(object, options);
-
-      try {
-        return this.serializeConverter(object, serializer)
-          || this.serializeSerializable(object, options)
-          || this.serializeDefault(object, serializer, type, checkRequiredValue);
-      } catch (err) {
-        if (!(err instanceof BadRequest) && !(err instanceof InternalServerError)) {
-          err = new ConverterSerializationError(getClass(object), err);
-        }
-
-        throw err;
-      }
-    }
-
-    const linker = () => {
-      const target = object && object.constructor && (object.constructor.base instanceof Mongoose)
-        ? this.mongoose.getModel(object)
-        : getClass(object)
-      
-      const linker = this.injector.get<LinkerProvider>(LinkerProvider)!.get<any>(target);
-      return linker && linker.link(object);
-    }
-
-    // Handle merging. If serialized data is string, can be replaced by linker.
-    const merge = (data: any, link: any) => {
-      for (const [key, value] of Object.entries(link)
-        .filter(([key, value]) => !data[key] || typeof data[key] == 'string')) {
-        data[key] = value;
-      }
-
-      return data;
-    }
+    const serializer: ISerializer = object => this.serialize(object, options);
 
     if (isEmpty(object)) {
       return object;
     }
 
-    return merge(serializer(), linker() || {});
+    try {
+      return this.serializeConverter(object, serializer)
+        || this.serializeSerializable(object, options)
+        || this.serializeDefault(object, serializer, type, checkRequiredValue);
+    } catch (err) {
+      if (!(err instanceof BadRequest) && !(err instanceof InternalServerError)) {
+        err = new ConverterSerializationError(getClass(object), err);
+      }
+
+      throw err;
+    }
   }
 
   public deserialize(object: any, target: any, base?: any, options: IConverterOptions = {}): any {
