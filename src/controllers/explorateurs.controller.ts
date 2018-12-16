@@ -1,12 +1,14 @@
-import { Controller, Post, PathParams, BodyParams, UseAfter, Inject, Status, Get, ValidationService, Authenticated } from '@tsed/common';
+import { Controller, Post, BodyParams, UseAfter, Inject, Status, Get, Authenticated, UseBefore, QueryParams, Response } from '@tsed/common';
 import { ConnectionMiddleware } from '../middlewares/connection.middleware';
 import { MongooseModel } from '@tsed/mongoose';
 import { Explorateur } from '../models/explorateur';
+import { Response as ExpressResponse } from 'express';
 import * as bcrypt from 'bcrypt';
 import { ResultLocationMiddleware } from '../middlewares/location.middleware';
 import { ExplorationsExplorateursController } from './explorations.explorateurs.controller';
 import { UnitsExplorateursController } from './units.explorateurs.controller';
 import { UnprocessableEntity } from 'ts-httpexceptions';
+import { PagingParamsMiddleware } from '../middlewares/paging.middleware';
 
 @Controller('/explorateurs', ExplorationsExplorateursController, UnitsExplorateursController)
 export class ExplorateursController {
@@ -29,8 +31,12 @@ export class ExplorateursController {
 
   @Get('')
   @Authenticated()
-  async get() {
-    // TODO: Alexandre HALSON
+  @UseBefore(PagingParamsMiddleware)
+  async get(
+    @QueryParams('page', Number) page: number,
+    @QueryParams('size', Number) size: number,
+    @Response() response: ExpressResponse) {
+    response.locals.count = await this.explorateurs.count({});
     return await this.explorateurs.find();
   }
 }

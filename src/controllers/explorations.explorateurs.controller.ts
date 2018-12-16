@@ -1,4 +1,4 @@
-import { Controller, Inject, Get, Authenticated, PathParams, MergeParams, Post, BodyParams, Status, Response, UseAfter } from '@tsed/common';
+import { Controller, Inject, Get, Authenticated, PathParams, MergeParams, Post, BodyParams, Status, Response, UseAfter, UseBefore, QueryParams } from '@tsed/common';
 import { MongooseModel } from '@tsed/mongoose';
 import { Exploration } from '../models/exploration';
 import { Explorateur } from '../models/explorateur';
@@ -9,6 +9,8 @@ import { Unit } from '../models/unit';
 import { RunesHolder } from '../models/runesholder';
 import { LocalLocationMiddleware } from '../middlewares/location.middleware';
 import { Response as ExpressResponse } from 'express';
+import { NotFound } from 'ts-httpexceptions';
+import { PagingParamsMiddleware } from '../middlewares/paging.middleware';
 
 @Controller('/:explorateur/explorations')
 @MergeParams()
@@ -23,8 +25,21 @@ export class ExplorationsExplorateursController {
     @Inject(RunesHolder) private runes: MongooseModel<RunesHolder>) { }
 
   @Get('')
-  async get() {
-    // TODO: Alexandre
+  @Authenticated()
+  @UseBefore(PagingParamsMiddleware)
+  async get(  
+    @PathParams('explorateur', String) name: string,
+    @QueryParams('page', Number) page: number,
+    @QueryParams('size', Number) size: number,
+    @Response() response: ExpressResponse) {
+    const explorateur = await this.explorateurs.findOne({ name: name });
+
+    if (!explorateur) {
+      throw new NotFound(`Explorateur ${ name } doesn't exist.`);
+    }
+
+    response.locals.count = await this.explorations.count({ explorateur: explorateur._id });
+    return await this.explorations.find({ explorateur: explorateur._id }).skip(page * size).limit(size);
   }
 
   @Post('')
@@ -46,11 +61,18 @@ export class ExplorationsExplorateursController {
   }
 
   @Get('/:id')
+  @Authenticated()
   async getOne(
-    @PathParams('explorateur', String) explorateur: string,
+    @PathParams('explorateur', String) name: string,
     @PathParams('id', String) id: string) {
-    return await this.explorations.findOne({ _id: id })
-      .populate({ path: 'explorateur', match: { name: explorateur }});
+    const exploration = await this.explorations.findOne({ _id: id });
+
+    // Si exploration est undefined, la logique du sendresponse va s'occuper du 404.
+    if (exploration && (exploration.explorateur as Explorateur).name != name) {
+      throw new NotFound(`Explorateur ${ name } has no exploration ${ id }.`);
+    }
+
+    return exploration;    
   }
 
   private async createUnitResult(result: UnitResult): Promise<UnitResult> {
