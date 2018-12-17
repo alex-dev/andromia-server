@@ -4,7 +4,6 @@ import { Response as ExpressResponse } from 'express';
 import { OwnedUnit } from '../models/ownedunit';
 import { PagingParamsMiddleware } from '../middlewares/paging.middleware';
 import { Explorateur } from '../models/explorateur';
-import { NotFound } from 'ts-httpexceptions';
 
 @Controller('/:explorateur/units')
 @MergeParams()
@@ -20,7 +19,7 @@ export class UnitsExplorateursController {
     @PathParams('explorateur', String) name: string,
     @QueryParams('page', Number) page: number,
     @QueryParams('size', Number) size: number,
-    @Response() response: ExpressResponse) {
+    @Response() response: ExpressResponse): Promise<OwnedUnit[]|null> {
     const explorateur = await this.explorateurs.findOne({ name: name });
 
     if (!explorateur) {
@@ -35,12 +34,12 @@ export class UnitsExplorateursController {
   @Authenticated()
   async getOne(
     @PathParams('explorateur', String) name: string,
-    @PathParams('uuid', String) uuid: string) {
+    @PathParams('uuid', String) uuid: string): Promise<OwnedUnit|null> {
     const unit = await this.units.findOne({ uuid: uuid });
 
     // Si unit est undefined, la logique du sendresponse va s'occuper du 404.
     if (unit && (unit.explorateur as Explorateur).name != name) {
-      return undefined;
+      return null;
     }
 
     return unit;

@@ -1,7 +1,7 @@
 import { Controller, MergeParams, Authenticated, Inject, Get, PathParams } from "@tsed/common";
 import { MongooseModel } from '@tsed/mongoose';
 import { Explorateur } from '../models/explorateur';
-import { NotFound } from "ts-httpexceptions";
+import { Ability } from "../models/types";
 
 @Controller('/:explorateur/runes')
 @MergeParams()
@@ -11,7 +11,7 @@ export class RunesExplorateursController {
   @Get('')
   @Authenticated()
   async get(  
-    @PathParams('explorateur', String) name: string) {
+    @PathParams('explorateur', String) name: string): Promise<Map<Ability, number>|null> {
     const explorateur = await this.explorateurs.findOne({ name: name });
     return explorateur && explorateur.runes;
   }

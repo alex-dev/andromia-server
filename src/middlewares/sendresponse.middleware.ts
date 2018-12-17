@@ -17,7 +17,7 @@ export class SendResponseMiddleware implements IMiddleware {
       return;
     }
 
-    if (data === undefined) {
+    if (data === undefined || data === null) {
       throw new NotFound('Requested data was not found.');
     }
     

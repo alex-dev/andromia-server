@@ -1,4 +1,4 @@
-import { Controller, Post, PathParams, BodyParams, UseAfter, Inject } from '@tsed/common';
+import { Controller, Post, BodyParams, UseAfter, Inject } from '@tsed/common';
 import { ConnectionMiddleware } from '../middlewares/connection.middleware';
 import { MongooseModel } from '@tsed/mongoose';
 import { Explorateur } from '../models/explorateur';
@@ -13,7 +13,7 @@ export class LoginController {
   @UseAfter(ConnectionMiddleware)
   async login(
     @BodyParams('name', String) name: string,
-    @BodyParams('password', String) password: string) {
+    @BodyParams('password', String) password: string): Promise<Explorateur> {
     const explorateur = await this.explorateurs.findOne({ $or: [{ email: name.toLowerCase() }, { name: name }] });
     
     if (!explorateur || !(await bcrypt.compare(password, explorateur.password))) {
