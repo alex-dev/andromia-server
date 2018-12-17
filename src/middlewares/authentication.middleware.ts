@@ -1,6 +1,7 @@
 import { OverrideMiddleware, AuthenticatedMiddleware, IMiddleware, EndpointInfo, EndpointMetadata, Request, Response } from "@tsed/common";
 import { Request as ExpressRequest, Response as ExpressResponse } from "express";
 import * as passport from 'passport';
+import { Unauthorized } from "../errors";
 
 @OverrideMiddleware(AuthenticatedMiddleware)
 export class AuthenticationMiddleware implements IMiddleware {
@@ -9,7 +10,7 @@ export class AuthenticationMiddleware implements IMiddleware {
       failWithError: true
     }, (error: any, user: any) => {
       if (error || !user) {
-        reject(error);
+        reject(error || new Unauthorized('No credentials'));
       }
 
       resolve(user);
