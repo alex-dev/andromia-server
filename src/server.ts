@@ -39,7 +39,7 @@ import * as cors from 'cors';
 export class Server extends ServerLoader {
   public $onMountingMiddlewares(): void|Promise<void> {
     this.use(GlobalAcceptMimesMiddleware)
-      .use(cors())
+      .use(cors({ exposedHeaders: ['Location', 'X-Token'] }))
       .use(compress({}))
       .use(override())
       .use(parser.json())
