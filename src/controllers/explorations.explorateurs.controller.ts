@@ -34,10 +34,10 @@ export class ExplorationsExplorateursController {
     const explorateur = await this.explorateurs.findOne({ name: name });
 
     if (!explorateur) {
-      throw new NotFound(`Explorateur ${ name } doesn't exist.`);
+      return explorateur;
     }
 
-    response.locals.count = await this.explorations.count({ explorateur: explorateur._id });
+    response.locals.count = await this.explorations.countDocuments({ explorateur: explorateur._id });
     return await this.explorations.find({ explorateur: explorateur._id }).skip(page * size).limit(size);
   }
 
@@ -68,7 +68,7 @@ export class ExplorationsExplorateursController {
 
     // Si exploration est undefined, la logique du sendresponse va s'occuper du 404.
     if (exploration && (exploration.explorateur as Explorateur).name != name) {
-      throw new NotFound(`Explorateur ${ name } has no exploration ${ id }.`);
+      return undefined;
     }
 
     return exploration;    

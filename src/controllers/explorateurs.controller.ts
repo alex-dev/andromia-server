@@ -1,4 +1,4 @@
-import { Controller, Post, BodyParams, UseAfter, Inject, Status, Get, Authenticated, UseBefore, QueryParams, Response } from '@tsed/common';
+import { Controller, Post, BodyParams, UseAfter, Inject, Status, Get, Authenticated, UseBefore, QueryParams, Response, PathParams } from '@tsed/common';
 import { ConnectionMiddleware } from '../middlewares/connection.middleware';
 import { MongooseModel } from '@tsed/mongoose';
 import { Explorateur } from '../models/explorateur';
@@ -9,6 +9,7 @@ import { ExplorationsExplorateursController } from './explorations.explorateurs.
 import { UnitsExplorateursController } from './units.explorateurs.controller';
 import { UnprocessableEntity } from 'ts-httpexceptions';
 import { PagingParamsMiddleware } from '../middlewares/paging.middleware';
+import { NotFound } from "ts-httpexceptions";
 
 @Controller('/explorateurs', ExplorationsExplorateursController, UnitsExplorateursController)
 export class ExplorateursController {
@@ -36,7 +37,14 @@ export class ExplorateursController {
     @QueryParams('page', Number) page: number,
     @QueryParams('size', Number) size: number,
     @Response() response: ExpressResponse) {
-    response.locals.count = await this.explorateurs.count({});
+    response.locals.count = await this.explorateurs.countDocuments({});
     return await this.explorateurs.find();
   }
+
+  @Get('/:explorateur')
+  @Authenticated()
+  async getOne(
+    @PathParams('explorateur', String) name: string) {
+      return await this.explorateurs.findOne({ name: name });
+    }
 }
