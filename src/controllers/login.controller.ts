@@ -13,7 +13,7 @@ export class LoginController {
   @UseAfter(ConnectionMiddleware)
   async login(
     @BodyParams('name', String) name: string,
-    @PathParams('password', String) password: string) {
+    @BodyParams('password', String) password: string) {
     const explorateur = await this.explorateurs.findOne({ $or: [{ email: name.toLowerCase() }, { name: name }] });
     
     if (!explorateur || !(await bcrypt.compare(password, explorateur.password))) {

@@ -4,6 +4,7 @@ import * as parser from 'body-parser';
 import * as compress from 'compression';
 import * as override from 'method-override';
 import * as Path from 'path';
+import * as cors from 'cors';
 
 @ServerSettings({
   debug: process.env.NODE_ENV != 'prod',
@@ -38,6 +39,7 @@ import * as Path from 'path';
 export class Server extends ServerLoader {
   public $onMountingMiddlewares(): void|Promise<void> {
     this.use(GlobalAcceptMimesMiddleware)
+      .use(cors())
       .use(compress({}))
       .use(override())
       .use(parser.json())
