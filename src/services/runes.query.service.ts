@@ -17,6 +17,23 @@ export class RunesQueryService {
     @Inject(Unit) private units: MongooseModel<Unit>,
     @Inject(RunesHolder) private runes_: MongooseModel<RunesHolder>) { }
 
+  public get defaultAbilities(): Set<Ability> {
+    return new Set<Ability>([
+      'air',
+      'darkness',
+      'earth',
+      'energy',
+      'fire',
+      'life',
+      'light',
+      'logic',
+      'music',
+      'space',
+      'toxic',
+      'water'
+    ]);
+  }
+
   public async runes(): Promise<Set<Rune>> {
     const runes: [Set<Rune>, Set<Rune>] = await Promise.all([
       this.abilities(),

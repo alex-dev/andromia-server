@@ -4,7 +4,6 @@ import { ConverterSerializationError } from '@tsed/common/lib/converters/errors/
 import { ConverterDeserializationError } from '@tsed/common/lib/converters/errors/ConverterDeserializationError';
 import { CONVERTER } from '@tsed/common/lib/converters/constants/index';
 import { BadRequest, InternalServerError } from 'ts-httpexceptions';
-import { LinkerProvider } from './linker.provider';
 import { BaseConverter } from '../converters/baseconverter';
 import { Mongoose } from 'mongoose';
 import { MongooseDocumentToModelService } from './mongooseDocumentToModel.service';
