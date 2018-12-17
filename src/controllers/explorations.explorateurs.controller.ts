@@ -14,7 +14,6 @@ import { PagingParamsMiddleware } from '../middlewares/paging.middleware';
 
 @Controller('/:explorateur/explorations')
 @MergeParams()
-@Authenticated()
 export class ExplorationsExplorateursController {
   public constructor(
     @Inject(Exploration) private explorations: MongooseModel<Exploration>,

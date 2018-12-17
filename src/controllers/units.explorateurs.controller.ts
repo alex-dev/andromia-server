@@ -8,7 +8,6 @@ import { NotFound } from 'ts-httpexceptions';
 
 @Controller('/:explorateur/units')
 @MergeParams()
-@Authenticated()
 export class UnitsExplorateursController {
   public constructor(
     @Inject(Explorateur) private explorateurs: MongooseModel<Explorateur>,
