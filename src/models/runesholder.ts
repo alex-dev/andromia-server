@@ -5,6 +5,9 @@ import { Ability, Weapon } from './types';
 @Model({
   collection: 'runesholders',
   schemaOptions: {
+    // @ts-ignore
+    autoCreate: true,
+    autoIndex: true,    
     strict: 'throw',
     useNestedStrict: true,
     versionKey: false,

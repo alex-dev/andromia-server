@@ -6,6 +6,9 @@ import { conflictMiddleware } from '../mongoose.middlewares/conflict.middleware'
 @Model({
   collection: 'unitresults',
   schemaOptions: {
+    // @ts-ignore
+    autoCreate: true,
+    autoIndex: true,    
     strict: 'throw',
     useNestedStrict: true,
     versionKey: false,

@@ -6,7 +6,7 @@ import { RunesHolder } from "../models/runesholder";
 import { Exploration } from "../models/exploration";
 import { Unit } from "../models/unit";
 import { Ability, Weapon, Rune } from "../models/types";
-import { ModelMapReduceOption } from "mongoose";
+import { ModelMapReduceOption, MapReduceResult } from "mongoose";
 
 @Service()
 export class RunesQueryService {
@@ -47,13 +47,13 @@ export class RunesQueryService {
     return new Set<Weapon>(runes);
   }
 
-  public async reduceMap<T>(query: Promise<{ _id: T, value: null}[]>): Promise<T[]> {
-    return (await query).map((object: any) => object._id);
+  public async reduceMap<T>(query: Promise<any>): Promise<T[]> {
+    return (await query).results.map((object: MapReduceResult<T, null>) => object._id);
   }
 
   public constructRunesMapReduce<Model, Key>(property: string): ModelMapReduceOption<Model, Key, null> {
     return {
-      map: `function() { for (const rune in this.${ property }) { emit(rune, null); } }`,
+      map: `function() { for (rune in this.${ property }) { emit(rune, null); } }`,
       reduce: function(key, models) { return null; }
     }
   }

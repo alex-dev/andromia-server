@@ -25,11 +25,7 @@ import * as cors from 'cors';
     connectionOptions: {
       poolSize: 10,
       user: process.env.MONGO_USER,
-      pass: process.env.MONGO_PASSWORD,
-      config: {
-        autoCreate: true,
-        autoIndex: true
-      }
+      pass: process.env.MONGO_PASSWORD
     }
   },
   passport: {
