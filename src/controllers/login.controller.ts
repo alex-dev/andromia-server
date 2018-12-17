@@ -4,6 +4,7 @@ import { MongooseModel } from '@tsed/mongoose';
 import { Explorateur } from '../models/explorateur';
 import { Unauthorized } from '../errors';
 import * as bcrypt from 'bcrypt';
+import { UnprocessableEntity } from 'ts-httpexceptions';
 
 @Controller('/login')
 export class LoginController {
@@ -14,6 +15,13 @@ export class LoginController {
   async login(
     @BodyParams('name', String) name: string,
     @BodyParams('password', String) password: string): Promise<Explorateur> {
+    if (!name) {
+      throw new UnprocessableEntity('Invalid name');
+    }
+    if (!password) {
+      throw new UnprocessableEntity('Invalid password');
+    }
+
     const explorateur = await this.explorateurs.findOne({ $or: [{ email: name.toLowerCase() }, { name: name }] });
     
     if (!explorateur || !(await bcrypt.compare(password, explorateur.password))) {
