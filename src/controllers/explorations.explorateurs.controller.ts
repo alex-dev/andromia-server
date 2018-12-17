@@ -9,7 +9,6 @@ import { Unit } from '../models/unit';
 import { RunesHolder } from '../models/runesholder';
 import { LocalLocationMiddleware } from '../middlewares/location.middleware';
 import { Response as ExpressResponse } from 'express';
-import { NotFound } from 'ts-httpexceptions';
 import { PagingParamsMiddleware } from '../middlewares/paging.middleware';
 
 @Controller('/:explorateur/explorations')
@@ -30,7 +29,7 @@ export class ExplorationsExplorateursController {
     @PathParams('explorateur', String) name: string,
     @QueryParams('page', Number) page: number,
     @QueryParams('size', Number) size: number,
-    @Response() response: ExpressResponse) {
+    @Response() response: ExpressResponse): Promise<Exploration[]|null> {
     const explorateur = await this.explorateurs.findOne({ name: name });
 
     if (!explorateur) {
@@ -63,12 +62,12 @@ export class ExplorationsExplorateursController {
   @Authenticated()
   async getOne(
     @PathParams('explorateur', String) name: string,
-    @PathParams('id', String) id: string) {
+    @PathParams('id', String) id: string): Promise<Exploration|null> {
     const exploration = await this.explorations.findOne({ _id: id });
 
     // Si exploration est undefined, la logique du sendresponse va s'occuper du 404.
     if (exploration && (exploration.explorateur as Explorateur).name != name) {
-      return undefined;
+      return null;
     }
 
     return exploration;    

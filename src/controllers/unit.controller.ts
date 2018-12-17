@@ -14,7 +14,7 @@ export class UnitsController {
 
   @Get('/:name')
   @Authenticated()
-  async getOne(@PathParams('name', String) name: string) {
+  async getOne(@PathParams('name', String) name: string): Promise<Unit|null> {
     return await this.units.findOne({ name: name });
   }
 }

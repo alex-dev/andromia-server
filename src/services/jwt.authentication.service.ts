@@ -81,8 +81,9 @@ export class JWTAuthenticationService implements AfterRoutesInit {
 
   private async validateIsTarget(request: Request, payload: JWT): Promise<Explorateur> {
     const explorateur = await this.validateLoggedIn(payload);
+    const name =  request.params.name || request.params.explorateur;
 
-    if (request.params.name !== explorateur.name && request.params.name !== explorateur._id) {
+    if (name !== explorateur.name && name !== explorateur._id) {
       throw new Forbidden(`${ explorateur.name } cannot access the requested resources.`);
     }
 
