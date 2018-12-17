@@ -30,7 +30,7 @@ export class LinkerService {
     return linker && linker.link(object);
   }
 
-  private get<T>(object: any): AbstractLinker<T> {
+  public get<T>(object: any): AbstractLinker<T> {
     const target = object && object.constructor && (object.constructor.base instanceof Mongoose)
       ? this.mongoose.getModel(object)
       : getClass(object);
