@@ -10,8 +10,12 @@ import { UnitsExplorateursController } from './units.explorateurs.controller';
 import { UnprocessableEntity, BadRequest } from 'ts-httpexceptions';
 import { PagingParamsMiddleware } from '../middlewares/paging.middleware';
 import { User } from '../filters/user.filter';
+import { RunesExplorateursController } from './runes.explorateurs.controller';
 
-@Controller('/explorateurs', ExplorationsExplorateursController, UnitsExplorateursController)
+@Controller('/explorateurs',
+  ExplorationsExplorateursController,
+  UnitsExplorateursController,
+  RunesExplorateursController)
 export class ExplorateursController {
   public constructor(@Inject(Explorateur) private explorateurs: MongooseModel<Explorateur>) { }
 
