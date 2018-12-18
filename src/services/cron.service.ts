@@ -30,10 +30,10 @@ export class CronService implements AfterRoutesInit {
     $log.info('Crons scheduled');
   }
 
-  private run(cron: CronInterface) {
-    return () => {
+  private run(cron: CronInterface): () => Promise<void> {
+    return async () => {
       $log.info(`${ cron.name } started.`)
-      cron.run();
+      await cron.run();
       $log.info(`${ cron.name } ended.`)
     }
   }

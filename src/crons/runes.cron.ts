@@ -20,7 +20,7 @@ export class RunesCron implements CronInterface {
     const values: any = {};
 
     for (const rune of this.runes.defaultAbilities) {
-      values[`kernel.${ rune }`] = Math.floor(Math.random() * 4) + 2;
+      values[`runes.${ rune }`] = Math.floor(Math.random() * 4) + 2;
     }
 
     await this.explorateurs.updateMany({}, { $inc: values });
