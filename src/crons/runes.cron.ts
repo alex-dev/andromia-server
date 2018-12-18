@@ -1,16 +1,14 @@
-import { Service, Inject } from "@tsed/common";
 import { Explorateur } from "../models/explorateur";
 import { MongooseModel } from "@tsed/mongoose";
 import { CronInterface } from "./cron.interface";
 import { RunesQueryService } from "../services/runes.query.service";
 
-@Service()
 export class RunesCron implements CronInterface {
   public readonly name = 'RunesCron'
 
   public constructor(
     private runes: RunesQueryService,
-    @Inject(Explorateur) private explorateurs: MongooseModel<Explorateur>) { }
+    private explorateurs: MongooseModel<Explorateur>) { }
 
   public get expression() {
     return '0 * * * *';
