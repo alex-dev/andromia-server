@@ -71,7 +71,7 @@ export class ExplorateursController {
 
     return await this.explorateurs.findByIdAndUpdate(user._id, {
       email: explorateur.email,
-      password: explorateur.password
+      password: await bcrypt.hash(explorateur.password, 11)
     }, { new: true });
   }
 }

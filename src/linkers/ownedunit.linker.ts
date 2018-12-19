@@ -16,7 +16,7 @@ export class OwnedUnitLinker extends AbstractLinker<OwnedUnit> {
 
     if (unit.explorateur) {
       value.explorateur = this.url(unit);
-      value.href = `${ value.explorateur }/unit/${ unit.uuid }`;
+      value.href = `${ value.explorateur }/units/${ unit.uuid }`;
     }
 
     return value;
