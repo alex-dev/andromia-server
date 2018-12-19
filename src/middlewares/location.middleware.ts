@@ -9,7 +9,7 @@ export class LocalLocationMiddleware implements IMiddleware {
     @Locals('created') entity: any,
     @Response() response: ExpressResponse) {
     const data = this.converter.serialize(entity);
-    
+
     if (data.href) {
       response.setHeader('Location', data.href);
     }

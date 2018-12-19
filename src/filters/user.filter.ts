@@ -10,5 +10,8 @@ export class UserFilter implements IFilter {
 }
 
 export function User(): Function {
-  return ParamRegistry.decorate(UserFilter);
+  return ParamRegistry.decorate(UserFilter, {
+    useConverter: false,
+    useValidation: false
+  });
 }

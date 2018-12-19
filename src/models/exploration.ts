@@ -1,9 +1,11 @@
-import { Property, Required, IgnoreProperty } from '@tsed/common';
-import { Model, Ref, Schema, PostHook } from '@tsed/mongoose';
+import { Property, PropertyType, Required, IgnoreProperty } from '@tsed/common';
+import { Model, Ref, Schema, PostHook, MongoosePlugin as Plugin } from '@tsed/mongoose';
 import { Explorateur } from './explorateur';
 import { Ability, Location } from './types';
 import { UnitResult } from './unitresult';
 import { conflictMiddleware } from '../mongoose.middlewares/conflict.middleware';
+// @ts-ignore
+import * as autopopulate from 'mongoose-autopopulate';
 
 @Model({
   collection: 'explorations',
@@ -17,19 +19,21 @@ import { conflictMiddleware } from '../mongoose.middlewares/conflict.middleware'
     timestamps: false
   }
 })
+// @ts-ignore
+@Plugin(autopopulate)
 @PostHook('save', conflictMiddleware)
 @PostHook('update', conflictMiddleware)
 @PostHook('findOneAndUpdate', conflictMiddleware)
 @PostHook('insertMany', conflictMiddleware)
 export class Exploration {
   @Property('id') public _id: string|undefined;
-  @IgnoreProperty() @Ref('Explorateur') @Schema({ autopopulate: true }) public explorateur: Ref<Explorateur> = '';
+  @Property() @Ref('Explorateur') @Schema({ required: true, autopopulate: true }) public explorateur: Ref<Explorateur>|null = null;
   @Required() public started: Date;
   @Required() public ended: Date;
   @Property() public from: Location | null = null;
   @Required() public to: Location;
-  @Property() @Ref('UnitResult') @Schema({ autopopulate: true }) public unit: Ref<UnitResult>|null;
-  @Property() public runes: Map<Ability, number>;
+  @Property() @PropertyType(UnitResult) @Ref('UnitResult') @Schema({ autopopulate: true }) public unit: Ref<UnitResult>|null;
+  @Property() @PropertyType(Number) @Schema({ type: Map, of: Number }) public runes: Map<Ability, number>;
 
   public constructor(started: Date, ended: Date, to: Location, unit: UnitResult|null = null, runes = new Map<Ability, number>()) {
     this.started = started;

@@ -1,4 +1,5 @@
 import { IConverter, Converter, IDeserializer, ISerializer, PropertyRegistry } from '@tsed/common';
+import { nameOf } from '@tsed/core';
 import { OwnedUnit } from '../models/ownedunit';
 import { Unit } from '../models/unit';
 import { BaseConverter } from './baseconverter';
@@ -9,7 +10,8 @@ export class OwnedUnitConverter extends BaseConverter implements IConverter {
     const getUnit = () => {
       const subdata = Object.assign({}, data);
       delete subdata['uuid'];
-      delete subdata['kernel'];  
+      delete subdata['kernel'];
+      delete subdata['created'];
       return subdata;
     }
 
@@ -19,6 +21,7 @@ export class OwnedUnitConverter extends BaseConverter implements IConverter {
 
     const value = new OwnedUnit(
       deserializer(data['uuid'], String),
+      deserializer(data['created'], Date),
       deserializer(getUnit(), Unit),
       deserializer(data['kernel'], Map, Number)
     );
@@ -32,9 +35,8 @@ export class OwnedUnitConverter extends BaseConverter implements IConverter {
     this.checkRequiredValue(object, properties);
     
     const value: any = serializer(object.unit);
-    delete value.href;
 
-    for (const key of [...properties.keys()].filter(key => key !== 'unit')) {
+    for (const key of [...properties.keys()].filter(key => !['unit', 'explorateur'].includes(nameOf(key)))) {
       const metadata = BaseConverter.getPropertyMetadata(properties, key);
       value[(metadata && metadata.name) || key] = serializer((object as any)[key]);
     }

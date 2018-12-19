@@ -2,6 +2,8 @@ import { MongooseDocument } from "@tsed/mongoose";
 import { Type, getClass } from "@tsed/core";
 import { OwnedUnit } from "../models/ownedunit";
 import { Explorateur } from "../models/explorateur";
+import { Unit } from '../models/unit';
+import { Exploration } from '../models/exploration';
 import { Service } from "@tsed/common";
 
 @Service()
@@ -13,6 +15,10 @@ export class MongooseDocumentToModelService {
         return getClass(OwnedUnit);
       case Explorateur.name:
         return getClass(Explorateur);
+      case Unit.name:
+        return getClass(Unit);
+      case Exploration.name:
+        return getClass(Exploration);
     }
   }
 }

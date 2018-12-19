@@ -25,10 +25,14 @@ export class ConverterService extends BaseConverter {
     if (isEmpty(object)) {
       return object;
     }
+    
+    const converter = this.getConverter(object);
+    if (converter) {
+      return converter.serialize!(object, serializer);
+    }
 
     try {
-      return this.serializeConverter(object, serializer)
-        || this.serializeSerializable(object, options)
+      return this.serializeSerializable(object, options)
         || this.serializeDefault(object, serializer, type, checkRequiredValue);
     } catch (err) {
       if (!(err instanceof BadRequest) && !(err instanceof InternalServerError)) {
@@ -49,8 +53,12 @@ export class ConverterService extends BaseConverter {
         return object;
       }
 
-      return this.deserializeConverter(object, target, base, deserializer)
-        || this.deserializeIterable(object, base, deserializer)
+      const converter = this.getConverter(target);
+      if (converter) {
+        return converter.deserialize!(object, target, base, deserializer);
+      }
+
+      return this.deserializeIterable(object, base, deserializer)
         || this.deserializeDeserializable(object, target)
         || this.deserializeDefault(object, target, deserializer, checkRequiredValue);
     } catch (err) {
@@ -64,29 +72,19 @@ export class ConverterService extends BaseConverter {
 
   public getConverter(target: any): IConverter|undefined {
     if (target && target.constructor && (target.constructor.base instanceof Mongoose)) {
-      target = this.mongoose.getModel(target);
+      target = this.mongoose.getModel(target) || target;
     }
 
     const converter = Metadata.get(CONVERTER, target);
     return converter && this.injector.get(converter);
   }
 
-  private deserializeConverter(object: any, target: any, base: any, deserializer: IDeserializer): any {
-    const converter = this.getConverter(target);
-    return converter && converter.deserialize!(object, target, base, deserializer)
-  }
-
   private deserializeIterable(object: any, base: any, deserializer: IDeserializer): any {
-    return isArrayOrArrayClass(object) && this.deserializeConverter(object, Array, base, deserializer);
+    return isArrayOrArrayClass(object) && this.getConverter(Array)!.deserialize!(object, Array, base, deserializer);
   }
 
   private deserializeDeserializable(object: any, target: any): any {
-    return target.prototype && typeof target.prototype.deserialize === 'function' && new target().deserialize(object)
-  }
-
-  private serializeConverter(object: any, serializer: ISerializer) {
-    const converter = this.getConverter(object);
-    return converter && converter.serialize!(object, serializer);
+    return target.prototype && typeof target.prototype.deserialize === 'function' && new target().deserialize(object);
   }
 
   private serializeSerializable(object: any, options: IConverterOptions) {

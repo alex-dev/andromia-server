@@ -60,6 +60,7 @@ export class ExplorateursController {
 
   @Put('/:explorateur')
   @Authenticated({ limitToOwner: true })
+  @UseAfter(ConnectionMiddleware)
   async modify(
     @User() user: Explorateur,
     @BodyParams('', Explorateur) explorateur: Explorateur): Promise<Explorateur|null> {
@@ -71,6 +72,6 @@ export class ExplorateursController {
     return await this.explorateurs.findByIdAndUpdate(user._id, {
       email: explorateur.email,
       password: explorateur.password
-    });
+    }, { new: true });
   }
 }

@@ -55,7 +55,11 @@ export class ExplorationsExplorateursController {
     }
 
     response.locals.created = await this.explorations.create(exploration);
-    return await this.explorateurs.findByIdAndUpdate(explorateur._id, explorateur) as Explorateur;
+    return await this.explorateurs.findByIdAndUpdate(explorateur._id, {
+      location: explorateur.location,
+      inox: explorateur.inox,
+      runes: explorateur.runes
+    }, { new: true }) as Explorateur;
   }
 
   @Get('/:id')

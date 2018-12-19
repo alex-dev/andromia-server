@@ -1,5 +1,6 @@
 import { ServerLoader, ServerSettings, GlobalAcceptMimesMiddleware, AuthenticatedMiddleware } from '@tsed/common';
 import '@tsed/mongoose';
+import * as passport from 'passport';
 import * as parser from 'body-parser';
 import * as compress from 'compression';
 import * as override from 'method-override';
@@ -39,6 +40,7 @@ export class Server extends ServerLoader {
       .use(compress({}))
       .use(override())
       .use(parser.json())
-      .use(parser.urlencoded({ extended: true }));
+      .use(parser.urlencoded({ extended: true }))
+      .use(passport.initialize());
   }
 }

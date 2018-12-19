@@ -1,10 +1,11 @@
-import { IgnoreProperty, Property, Required, Email, Minimum } from '@tsed/common';
-import { Indexed, Model, Ref, Unique, PostHook } from '@tsed/mongoose';
+import { IgnoreProperty, Property, PropertyType, Required, Email, Minimum } from '@tsed/common';
+import { Indexed, Model, Ref, Unique, PostHook, Schema } from '@tsed/mongoose';
 import { Ability, Location } from './types';
 import { Exploration } from './exploration';
 import { OwnedUnit } from './ownedunit';
 import { UnitResult } from './unitresult';
 import { conflictMiddleware } from '../mongoose.middlewares/conflict.middleware';
+import { BadRequest } from 'ts-httpexceptions';
 
 @Model({
   collection: 'explorateurs',
@@ -29,10 +30,10 @@ export class Explorateur {
   @Required() public password: string;
   @Indexed() @Property() public location: Location = 'Inoxis';
   @Property() public inox: number = 0;
-  @Property() public runes: Map<Ability, number> = new Map<Ability, number>();
+  @Property() @PropertyType(Number) @Schema({ type: Map, of: Number }) public runes: Map<Ability, number> = new Map<Ability, number>();
 
   public constructor(email: string, name: string, password: string) {
-    this.email = email.toLowerCase();
+    this.email = email && email.toLowerCase();
     this.name = name;
     this.password = password;
   }
@@ -41,8 +42,7 @@ export class Explorateur {
     exploration.complete(this, this.location);
     this.location = exploration.to;
 
-    if ((exploration.unit as UnitResult)
-      && (exploration.unit as UnitResult).accepted) {
+    if (exploration.unit && (exploration.unit as UnitResult).accepted) {
       this.receiveUnit((exploration.unit as UnitResult).unit as OwnedUnit);
     }
 
@@ -61,7 +61,7 @@ export class Explorateur {
     for (const [ability, count] of unit.kernel.entries()) {
       const quantity = this.runes.get(ability) || -1;
       if (count > quantity) {
-        throw new Error(`${ this.name } doesn't have ${ count } ${ ability } runes.`);
+        throw new BadRequest(`${ this.name } doesn't have ${ count } ${ ability } runes.`);
       }
 
       this.runes.set(ability, quantity - count);

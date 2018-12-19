@@ -1,4 +1,4 @@
-import { IgnoreProperty, Required } from '@tsed/common';
+import { PropertyType, IgnoreProperty, Required } from '@tsed/common';
 import { Model, } from '@tsed/mongoose';
 import { Ability, Weapon } from './types';
 
@@ -16,8 +16,8 @@ import { Ability, Weapon } from './types';
 })
 export class RunesHolder {
   @IgnoreProperty() public _id: string|undefined;
-  @Required() public abilities: Ability[];
-  @Required() public weapons: Weapon[];
+  @Required() @PropertyType(String) public abilities: Ability[];
+  @Required() @PropertyType(String) public weapons: Weapon[];
 
   public constructor(abilities: Ability[] = [], weapons: Weapon[] = []) {
     this.abilities = abilities;

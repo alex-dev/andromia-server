@@ -9,7 +9,7 @@ export class PagingParamsMiddleware implements IMiddleware {
   }
 
   private convert(value: any, _default: number): number {
-    if (typeof value !== 'number' || value < 1) {
+    if (isNaN(value) || value < 1) {
       value = _default;
     }
 

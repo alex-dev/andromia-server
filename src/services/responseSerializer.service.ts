@@ -7,7 +7,7 @@ export class ResponseSerializerService {
   public constructor(private converter: ConverterService, private linker: LinkerService) { }
 
   public serialize(data: any): any {
-    return data === null || typeof data in ["number", "boolean", "string"]
+    return data === null || ["number", "boolean", "string"].includes(typeof data)
       ? String(data)
       : this.merge(this.converter.serialize(data), this.linker.link(data))
   }

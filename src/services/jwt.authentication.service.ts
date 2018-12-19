@@ -1,4 +1,4 @@
-import { Service, ServerSettingsService, AfterRoutesInit, Inject } from '@tsed/common';
+import { ExpressApplication, Service, ServerSettingsService, BeforeRoutesInit, Inject } from '@tsed/common';
 import { MongooseModel } from '@tsed/mongoose';
 import { Request } from 'express';
 import { Strategy, ExtractJwt as Extract, VerifiedCallback } from 'passport-jwt';
@@ -7,6 +7,7 @@ import { Explorateur } from '../models/explorateur';
 import * as passport from 'passport';
 import * as jwt from 'jsonwebtoken';
 import { Unauthorized } from '../errors';
+import { $log } from 'ts-log-debug';
 
 interface JWT {
   id: string,
@@ -16,13 +17,14 @@ interface JWT {
 }
 
 @Service()
-export class JWTAuthenticationService implements AfterRoutesInit {
+export class JWTAuthenticationService implements BeforeRoutesInit {
   private readonly secret: string;
   private readonly publicjwt: Strategy;
   private readonly privatejwt: Strategy;
   
   public constructor(
     settings: ServerSettingsService,
+    @Inject(ExpressApplication) private app: ExpressApplication,
     @Inject(Explorateur) private explorateurs: MongooseModel<Explorateur>) {
     const { secret } = settings.get('passport') as any;
     const options = {
@@ -49,7 +51,8 @@ export class JWTAuthenticationService implements AfterRoutesInit {
     });
   }
 
-  public $afterRoutesInit() {
+  public $beforeRoutesInit(): void|Promise<void> {
+    $log.info('Initializing passport');
     passport.unuse('session'); // Don't want session strategy
     passport.use('public', this.publicjwt);
     passport.use('private', this.privatejwt)

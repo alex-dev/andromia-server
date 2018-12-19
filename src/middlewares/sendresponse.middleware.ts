@@ -23,10 +23,11 @@ export class SendResponseMiddleware implements IMiddleware {
     
     data = this.serializer.serialize(data);
 
-    if (request.query.page && data instanceof Array) {
+    if (request.query.size && data instanceof Array) {
       data = this.pager.page(
         process.env.SERVER_URL as string,
-        request.url,
+        `${ request.baseUrl }${ request.path === '/' ? '' : request.path }`,
+        data,
         request.query.page,
         request.query.size,
         response.locals.count);

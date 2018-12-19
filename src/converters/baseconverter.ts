@@ -51,7 +51,7 @@ export abstract class BaseConverter {
     const type = metadata && metadata.type;
     const collection = metadata && metadata.isCollection ? metadata.collectionType : type;
 
-    try {      
+    try {
       instance[key] = deserializer(value, collection, type);
     } catch (err) {
       throw new InvalidPropertyError(getClass(instance), property, value);
