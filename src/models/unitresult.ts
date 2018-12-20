@@ -25,7 +25,7 @@ import * as autopopulate from 'mongoose-autopopulate';
 @PostHook('insertMany', conflictMiddleware)
 export class UnitResult {
   @IgnoreProperty() public _id: string|undefined;
-  @Unique() @PropertyType(OwnedUnit) @Required() @Ref('OwnedUnit') @Schema({ autopopulate: true }) public unit: Ref<OwnedUnit>;
+  @Ref(OwnedUnit) @Unique() @Required() @Schema({ autopopulate: true }) public unit: Ref<OwnedUnit>;
   @Required() public accepted: boolean;
 
   public constructor(unit: OwnedUnit, accepted: boolean) {

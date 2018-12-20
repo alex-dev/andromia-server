@@ -1,7 +1,6 @@
 import { PropertyType, IgnoreProperty, Required, Minimum } from '@tsed/common';
 import { Indexed, Model, Unique, Ref, Schema, PostHook, MongoosePlugin as Plugin } from '@tsed/mongoose';
-import { Ability, Set } from './types';
-import { RunesHolder } from './runesholder';
+import { Ability } from './types';
 import { conflictMiddleware } from '../mongoose.middlewares/conflict.middleware';
 // @ts-ignore
 import * as autopopulate from 'mongoose-autopopulate';
@@ -28,21 +27,17 @@ export class Unit {
   @IgnoreProperty() public _id: string|undefined;
   @Unique() @Required() public number: number;
   @Unique() @Required() public name: string;
-  @Indexed() @Required() public set: Set;
   @Minimum(0) @Required() public life: number;
   @Minimum(0) @Required() public speed: number;
   @Required() public imageURL: string;
   @Indexed() @Required() public affinity: Ability;
-  @PropertyType(RunesHolder) @Required() @Ref('RunesHolder') @Schema({ autopopulate: true }) public runes: Ref<RunesHolder>;
 
-  public constructor(number: number, name: string, set: Set, life: number, speed: number, imageURL: string, affinity: Ability, runes: RunesHolder) {
+  public constructor(number: number, name: string, life: number, speed: number, imageURL: string, affinity: Ability) {
     this.number = number;
     this.name = name;
-    this.set = set;
     this.life = life;
     this.speed = speed;
     this.imageURL = imageURL;
     this.affinity = affinity;
-    this.runes = runes;
   }
 }

@@ -32,7 +32,7 @@ export class Exploration {
   @Required() public ended: Date;
   @Property() public from: Location | null = null;
   @Required() public to: Location;
-  @Property() @PropertyType(UnitResult) @Ref('UnitResult') @Schema({ autopopulate: true }) public unit: Ref<UnitResult>|null;
+  @Property() @Ref(UnitResult) @Schema({ autopopulate: true }) public unit: Ref<UnitResult>|null;
   @Property() @PropertyType(Number) @Schema({ type: Map, of: Number }) public runes: Map<Ability, number>;
 
   public constructor(started: Date, ended: Date, to: Location, unit: UnitResult|null = null, runes = new Map<Ability, number>()) {

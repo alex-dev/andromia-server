@@ -2,6 +2,7 @@ import { IConverter, Converter, IDeserializer, ISerializer, PropertyRegistry } f
 import { nameOf } from '@tsed/core';
 import { OwnedUnit } from '../models/ownedunit';
 import { Unit } from '../models/unit';
+import { RunesHolder } from '../models/runesholder';
 import { BaseConverter } from './baseconverter';
 
 @Converter(OwnedUnit)
@@ -10,19 +11,23 @@ export class OwnedUnitConverter extends BaseConverter implements IConverter {
     const getUnit = () => {
       const subdata = Object.assign({}, data);
       delete subdata['uuid'];
-      delete subdata['kernel'];
+      delete subdata['set'];
       delete subdata['created'];
+      delete subdata['runes'];
+      delete subdata['kernel'];
       return subdata;
     }
 
     if (target !== OwnedUnit) {
       return;
     }
-
+    
     const value = new OwnedUnit(
       deserializer(data['uuid'], String),
+      deserializer(data['set'], String),
       deserializer(data['created'], Date),
       deserializer(getUnit(), Unit),
+      deserializer(data['runes'], RunesHolder),
       deserializer(data['kernel'], Map, Number)
     );
 

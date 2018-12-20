@@ -46,6 +46,7 @@ export class RunesQueryService {
   public async abilities(): Promise<Set<Ability>> {
     const arrays = await Promise.all([
       this.runes_.distinct('abilities').exec() as Promise<Ability[]>,
+      this.runes_.distinct('ultimate').exec() as Promise<Ability[]>,
       this.units.distinct('affinity').exec() as Promise<Ability[]>,
       this.reduceMap<Ability>(this.ownedunits
         .mapReduce(this.constructRunesMapReduce<OwnedUnit, Ability>('kernel'))),

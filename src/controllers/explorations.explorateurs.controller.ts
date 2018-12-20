@@ -54,6 +54,7 @@ export class ExplorationsExplorateursController {
       exploration.unit = await this.createUnitResult(exploration.unit as UnitResult);
     }
 
+    console.log('result set up')
     response.locals.created = await this.explorations.create(exploration);
     return await this.explorateurs.findByIdAndUpdate(explorateur._id, {
       location: explorateur.location,
@@ -79,17 +80,15 @@ export class ExplorationsExplorateursController {
 
   private async createUnitResult(result: UnitResult): Promise<UnitResult> {
     result.unit = await this.createOwnedUnit(result.unit as OwnedUnit);
+    console.log('Owned unit set up')
     return await this.unitResults.create(result);
   }
 
   private async createOwnedUnit(unit: OwnedUnit): Promise<OwnedUnit> {
-    unit.unit = await this.units.findOne({ name: (unit.unit as Unit).name })
-      || await this.createUnit(unit.unit as Unit);
-    return await this.ownedUnits.create(unit);
-  }
-
-  private async createUnit(unit: Unit): Promise<Unit> {
     unit.runes = await this.runes.create(unit.runes);
-    return await this.units.create(unit);
+    unit.unit = await this.units.findOne({ name: (unit.unit as Unit).name })
+      || await this.units.create(unit.unit as Unit);
+    console.log('Unit set up');
+    return await this.ownedUnits.create(unit);
   }
 }

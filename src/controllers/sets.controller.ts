@@ -1,11 +1,11 @@
 import { Controller, Inject, Get } from "@tsed/common";
 import { MongooseModel } from '@tsed/mongoose';
-import { Unit } from "../models/unit";
+import { OwnedUnit } from "../models/ownedunit";
 import { Set as SetModel } from "../models/types";
 
 @Controller('/sets')
 export class SetsController {
-  public constructor(@Inject(Unit) private units: MongooseModel<Unit>) { }
+  public constructor(@Inject(OwnedUnit) private units: MongooseModel<OwnedUnit>) { }
 
   @Get('')
   async get(): Promise<Set<SetModel>> {

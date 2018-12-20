@@ -6,10 +6,10 @@ import * as url from 'build-url';
 @Service()
 export class PagingService {
   public page(host: string, path: string, data: any[], page: number, size: number, count?: number): any {
-    const pages = count ? Math.ceil(count / size) : Infinity;
+    const pages = count || count === 0 ? Math.ceil(count / size) || 1 : Infinity;
     page += 1;
     const halsondata = halson({
-      count: size,
+      size: size,
       index: page,
       items: data
     }).addLink('self', url(host, { path: path, queryParams: {
